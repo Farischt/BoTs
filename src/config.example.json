@@ -1,0 +1,5 @@
+{
+  "INSTRUCTIONS": "Create a config.json file in this directory. Copy the contents of this file into the config.json file and replace the values with your own.",
+  "DISCORD_TOKEN": "your-token-here",
+  "COMMAND_PREFIX": "your-prefix-here"
+}
