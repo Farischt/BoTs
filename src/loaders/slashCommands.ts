@@ -5,7 +5,7 @@ import { DiscordBot, DiscordCommandFileOptions } from "../index.d"
 export function addSlashCommandOption(
   slashCommand: Discord.SlashCommandBuilder,
   option: DiscordCommandFileOptions
-) {
+): void {
   const optionType =
     option.type.slice(0, 1).toUpperCase() +
     option.type.slice(1, option.type.length)
