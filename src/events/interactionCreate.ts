@@ -8,5 +8,5 @@ export default async function interactionCreate(
   if (!interaction.isChatInputCommand()) return
   const cmd = bot.commands.get(interaction.commandName)
   if (!cmd) return
-  cmd.run(bot, interaction, cmd.options)
+  cmd.run(bot, interaction, interaction.options)
 }
