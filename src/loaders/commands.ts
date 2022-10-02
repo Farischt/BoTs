@@ -15,7 +15,5 @@ export default async function loader(bot: DiscordBot): Promise<void> {
       if (!command.name)
         return console.error(`Command ${fileName} has no name !`)
       bot.commands.set(command.name, command)
-      // eslint-disable-next-line
-      console.warn(`Command ${command.name} loaded !`)
     })
 }

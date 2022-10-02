@@ -11,8 +11,6 @@ export default async function loader(bot: DiscordBot): Promise<void> {
     .forEach(async (file) => {
       if (file === "index.ts") return
       const event = (await import(`${eventsDir}/${file}`)).default
-      const eventName = file.split(".ts").join("")
       bot.on(event.name, event.bind(null, bot))
-      console.log(`Event ${eventName} loaded !`)
     })
 }

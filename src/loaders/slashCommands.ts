@@ -1,6 +1,36 @@
 import Discord, { REST, Routes } from "discord.js"
 
-import { DiscordBot } from "../index.d"
+import { DiscordBot, DiscordCommandFileOptions } from "../index.d"
+
+export function addSlashCommandOption(
+  slashCommand: Discord.SlashCommandBuilder,
+  option: DiscordCommandFileOptions
+) {
+  const optionType =
+    option.type.slice(0, 1).toUpperCase() +
+    option.type.slice(1, option.type.length)
+
+  switch (optionType) {
+    case "User":
+      slashCommand.addUserOption((opt) =>
+        opt
+          .setName(option.name)
+          .setDescription(option.description)
+          .setRequired(option.required)
+      )
+      break
+    case "String":
+      slashCommand.addStringOption((opt) =>
+        opt
+          .setName(option.name)
+          .setDescription(option.description)
+          .setRequired(option.required)
+      )
+      break
+    default:
+      console.error(`Not supported option type ${optionType}`)
+  }
+}
 
 export default async function loader(bot: DiscordBot): Promise<void> {
   const commands: Discord.SlashCommandBuilder[] = []
@@ -9,17 +39,13 @@ export default async function loader(bot: DiscordBot): Promise<void> {
     const slashCommand = new Discord.SlashCommandBuilder()
       .setName(command.name)
       .setDescription(command.description)
-      .setDMPermission(command.dm_permission)
-      .setDefaultMemberPermissions(command.default_member_permissions)
+      .setDMPermission(command.dmPermission)
+      .setDefaultMemberPermissions(command.defaultMemberPermission?.toString())
 
     if (options && options.length > 0) {
       options.forEach((opt) => {
-        slashCommand.addStringOption((option = opt) => {
-          return option
-            .setName(option.name)
-            .setDescription(option.description)
-            .setRequired(option.required)
-        })
+        // Here we must use the slachCommand[optionType](option => ) method
+        addSlashCommandOption(slashCommand, opt)
       })
     }
     commands.push(slashCommand)
@@ -27,11 +53,9 @@ export default async function loader(bot: DiscordBot): Promise<void> {
 
   const rest = new REST({ version: "10" }).setToken(bot.token?.toString() ?? "")
   try {
-    console.log("Loading slash commands...")
     await rest.put(Routes.applicationCommands(bot.user?.id ?? ""), {
       body: commands,
     })
-    console.log("Slash commands succesfully loaded")
   } catch (error) {
     console.error("Slash commands failed to load", error)
   }

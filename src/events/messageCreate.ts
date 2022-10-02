@@ -3,6 +3,7 @@ import Discord from "discord.js"
 import CONFIG from "../config.json"
 import { DiscordBot } from "../index.d"
 
+// Depreciated
 export default function messageCreate(
   bot: DiscordBot,
   message: Discord.Message
@@ -13,7 +14,6 @@ export default function messageCreate(
     .slice(CONFIG.COMMAND_PREFIX.length)
     .trim()
     .split(/ +/g)
-  console.log(args)
   const commandInput = args.shift()?.toLowerCase()
   if (!commandInput) return
   const cmd = bot.commands.get(commandInput)
