@@ -1,18 +1,5 @@
 import Discord from "discord.js"
 
-// Changes todo here
-// Make all "Commands" as Slach commands even those with no slash
-
-// export interface DiscordCommand
-//   extends Omit<Discord.SlashCommandBuilder, "options"> {
-//   options?: Discord.SlashCommandOptionsOnlyBuilder[]
-//   run: (
-//     bot: DiscordBot,
-//     message?: Discord.Message | Discord.ChatInputCommandInteraction,
-//     args?: Discord.SlashCommandOptionsOnlyBuilder
-//   ) => Promise<void>
-// }
-
 export interface DiscordCommandFileOptions {
   type: string
   name: string
@@ -27,9 +14,24 @@ export interface DiscordCommandFile {
   options?: DiscordCommandFileOptions[]
   run: (
     bot: DiscordBot,
-    message: Discord.Message | Discord.ChatInputCommandInteraction,
-    args: any
-  ) => Promise<void>
+    message: Discord.ChatInputCommandInteraction,
+    args: Discord.ChatInputCommandInteraction["options"]
+  ) => any
+}
+
+// TODO : update all commands file to extends this class
+export abstract class DiscordCommandDocument {
+  public static name: string
+  public static description: string
+  public static dmPermission: boolean
+  public static defaultMemberPermission: Discord.PermissionResolvable | null
+  public static options?: DiscordCommandFileOptions[]
+
+  public static run(
+    bot: DiscordBot,
+    message: Discord.ChatInputCommandInteraction,
+    args: Discord.ChatInputCommandInteraction["options"]
+  ): any
 }
 
 export interface DiscordBot extends Discord.Client {
