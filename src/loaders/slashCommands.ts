@@ -44,7 +44,6 @@ export default async function loader(bot: DiscordBot): Promise<void> {
 
     if (options && options.length > 0) {
       options.forEach((opt) => {
-        // Here we must use the slachCommand[optionType](option => ) method
         addSlashCommandOption(slashCommand, opt)
       })
     }
