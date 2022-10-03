@@ -1,4 +1,5 @@
 import Discord from "discord.js"
+import chalk from "chalk"
 import {
   DiscordBot,
   DiscordCommandDocument,
@@ -85,14 +86,14 @@ class BanCommand extends DiscordCommandDocument {
     if (!owner) error = BanInteractionErrorResponse.NoOwner
     else if (this.isMemberToBanOwner(owner, memberToBan))
       error = BanInteractionErrorResponse.OwernBan
+    else if (!memberToBan.bannable)
+      error = BanInteractionErrorResponse.Unbanable
+    else if (this.isSelfBan(interactionAuthor, memberToBan))
+      error = BanInteractionErrorResponse.SelfBan
     else if (this.hasAuthorValidPermission(interactionAuthor, owner))
       error = BanInteractionErrorResponse.NoPermission
     else if (this.isRoleHigher(interactionAuthor, memberToBan))
       error = BanInteractionErrorResponse.HigherBan
-    else if (this.isSelfBan(interactionAuthor, memberToBan))
-      error = BanInteractionErrorResponse.SelfBan
-    else if (!memberToBan.bannable)
-      error = BanInteractionErrorResponse.Unbanable
 
     return error
   }
@@ -110,33 +111,42 @@ class BanCommand extends DiscordCommandDocument {
   ): Promise<Discord.InteractionResponse<boolean> | undefined> {
     const { guild } = message
     if (!guild) {
+      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoGuild))
       return await message.reply(BanInteractionErrorResponse.NoGuild)
     }
 
     const userToBan = this.getDiscordUserToBanFromArgs(args)
-    if (!userToBan)
+    if (!userToBan) {
+      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoMember))
       return await message.reply(BanInteractionErrorResponse.NoMember)
+    }
 
     const memberToBan = this.getDiscordGuildMemberToBan(guild, userToBan.id)
     if (!memberToBan) {
+      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoMember))
       return await message.reply(BanInteractionErrorResponse.NoMember)
     }
     const interactionAuthor = this.getInteractionGuildMemberAuthor(
       guild,
       message
     )
-    if (!interactionAuthor)
+    if (!interactionAuthor) {
+      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoAuthor))
       return await message.reply(BanInteractionErrorResponse.NoAuthor)
+    }
 
     const error = await this.runChecks(guild, interactionAuthor, memberToBan)
     if (error) {
+      console.warn(chalk.bold.yellow(error))
       return await message.reply(error)
     }
 
     const guildBans = await this.getBanList(guild)
-    if (!guildBans)
+    if (!guildBans) {
+      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoBanList))
       return await message.reply(BanInteractionErrorResponse.NoBanList)
-    else if (guildBans.get(memberToBan.id)) {
+    } else if (guildBans.get(memberToBan.id)) {
+      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.AlreadyBan))
       return await message.reply(BanInteractionErrorResponse.AlreadyBan)
     }
 
@@ -158,7 +168,7 @@ class BanCommand extends DiscordCommandDocument {
         } for reason: ${reason.toString()}.`
       )
     } catch (err) {
-      console.log(err)
+      console.error(chalk.bold.red(err))
       return await message.reply(BanInteractionErrorResponse.Unknown)
     }
   }

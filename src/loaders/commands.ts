@@ -1,5 +1,6 @@
 import fs from "fs/promises"
 import path from "path"
+import chalk from "chalk"
 
 import { DiscordBot, DiscordCommandDocument } from "../types"
 
@@ -13,9 +14,14 @@ export default async function loader(bot: DiscordBot): Promise<void> {
       const command: DiscordCommandDocument = (
         await import(`${commandsDir}/${fileName}`)
       ).default
-      if (!command) return console.error(`Command ${fileName} does not exist !`)
+      if (!command)
+        return console.error(
+          chalk.bold.bgRed(`Command ${fileName} does not exist !`)
+        )
       if (!command.name)
-        return console.error(`Command ${fileName} has no name !`)
+        return console.error(
+          chalk.bold.bgRed(`Command ${fileName} has no name !`)
+        )
       bot.commands.set(command.name, command)
     })
 }

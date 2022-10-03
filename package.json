@@ -1,12 +1,12 @@
 {
-  "name": "my-webpack-project",
+  "name": "discord-bots",
   "version": "1.0.0",
-  "description": "My webpack project",
+  "description": "Discord bots written in typescript",
   "main": "index.js",
   "author": "Faris CHTATOU",
   "license": "MIT",
   "scripts": {
-    "start": "yarn build && node dist/main.js",
+    "start": "yarn build && node dist/index.js",
     "dev": "nodemon",
     "build": "rimraf ./build && tsc",
     "lint": "yarn eslint . --ext .ts",
@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/node": "^18.7.23",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "chalk": "4.1.2",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard-with-typescript": "^23.0.0",

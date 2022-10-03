@@ -1,5 +1,5 @@
 import Discord, { REST, Routes } from "discord.js"
-
+import chalk from "chalk"
 import { DiscordBot, DiscordCommandOption } from "../types"
 
 export function addSlashCommandOption(
@@ -28,7 +28,7 @@ export function addSlashCommandOption(
       )
       break
     default:
-      console.error(`Not supported option type ${optionType}`)
+      console.error(chalk.bold.bgRed(`Not supported option type ${optionType}`))
   }
 }
 
@@ -56,6 +56,6 @@ export default async function loader(bot: DiscordBot): Promise<void> {
       body: commands,
     })
   } catch (error) {
-    console.error("Slash commands failed to load", error)
+    console.error(chalk.bold.bgRed("Slash commands failed to load :\n"), error)
   }
 }
