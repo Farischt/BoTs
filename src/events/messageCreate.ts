@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 
 import CONFIG from "../config.json"
-import { DiscordBot } from "../index.d"
+import { DiscordBot } from "../types"
 
 enum MessageErrorResponse {
   InvalidCommandInput = "Invalid command input !",

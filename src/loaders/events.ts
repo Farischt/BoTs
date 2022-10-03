@@ -1,7 +1,7 @@
 import fs from "fs/promises"
 import path from "path"
 
-import { DiscordBot } from "../index.d"
+import { DiscordBot } from "../types"
 
 const eventsDir = path.join(__dirname, "../events")
 

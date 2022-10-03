@@ -1,10 +1,10 @@
 import Discord, { REST, Routes } from "discord.js"
 
-import { DiscordBot, DiscordCommandFileOptions } from "../index.d"
+import { DiscordBot, DiscordCommandOption } from "../types"
 
 export function addSlashCommandOption(
   slashCommand: Discord.SlashCommandBuilder,
-  option: DiscordCommandFileOptions
+  option: DiscordCommandOption
 ): void {
   const optionType =
     option.type.slice(0, 1).toUpperCase() +

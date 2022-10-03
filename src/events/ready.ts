@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 
 import slashCommandsLoader from "../loaders/slashCommands"
-import { DiscordBot } from "../index.d"
+import { DiscordBot } from "../types"
 
 export default async function ready(
   bot: DiscordBot,

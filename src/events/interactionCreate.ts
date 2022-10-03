@@ -1,5 +1,5 @@
 import Discord from "discord.js"
-import { DiscordBot } from "../index.d"
+import { DiscordBot } from "../types"
 
 export default async function interactionCreate(
   bot: DiscordBot,
