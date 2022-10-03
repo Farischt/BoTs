@@ -19,13 +19,6 @@
       {
         "checksVoidReturn": false
       }
-    ],
-    "@typescript-eslint/no-extraneous-class": [
-      "error",
-      {
-        "allowConstructorOnly": true,
-        "allowStaticOnly": true
-      }
     ]
   }
 }
