@@ -1,17 +1,42 @@
 import Discord from "discord.js"
-import { DiscordBot, DiscordCommandFile } from "../index.d"
+import {
+  DiscordBot,
+  DiscordCommandDocument,
+  DiscordCommandOptions,
+  DiscordCommandData,
+} from "../types"
 
-const pingCommand: DiscordCommandFile = {
+class PingCommand extends DiscordCommandDocument {
+  public constructor(
+    name: string,
+    description: string,
+    dmPermission: boolean,
+    defaultMemberPermission: Discord.PermissionResolvable | null,
+    options?: DiscordCommandOptions
+  ) {
+    super(name, description, dmPermission, defaultMemberPermission, options)
+  }
+
+  public async run(
+    bot: DiscordBot,
+    message: Discord.ChatInputCommandInteraction
+  ): Promise<void> {
+    await message.reply(`Pong ! ${bot.ws.ping}ms`)
+  }
+}
+
+const pingCommandData: DiscordCommandData = {
   name: "ping",
   description: "Pong!",
   dmPermission: true,
   defaultMemberPermission: null,
-  async run(
-    bot: DiscordBot,
-    message: Discord.Message | Discord.ChatInputCommandInteraction
-  ): Promise<void> {
-    await message.reply(`Pong ! ${bot.ws.ping}ms`)
-  },
+  options: undefined,
 }
 
-export default pingCommand
+export default new PingCommand(
+  pingCommandData.name,
+  pingCommandData.description,
+  pingCommandData.dmPermission,
+  pingCommandData.defaultMemberPermission,
+  pingCommandData.options
+)
