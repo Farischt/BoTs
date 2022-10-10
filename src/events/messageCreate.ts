@@ -26,7 +26,7 @@ export default async function messageCreate(
     if (!cmd) return await message.reply(MessageErrorResponse.CommandNotFound)
 
     return await message.reply(
-      `${MessageErrorResponse.CommandDepreciated} (/${cmd.name})`
+      `${MessageErrorResponse.CommandDepreciated} (/${cmd.getName()})`
     )
   }
 }

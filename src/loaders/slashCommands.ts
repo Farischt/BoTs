@@ -35,12 +35,14 @@ export function addSlashCommandOption(
 export default async function loader(bot: DiscordBot): Promise<void> {
   const commands: Discord.SlashCommandBuilder[] = []
   bot.commands.forEach((command) => {
-    const { options } = command
+    const options = command.getOptions()
     const slashCommand = new Discord.SlashCommandBuilder()
-      .setName(command.name)
-      .setDescription(command.description)
-      .setDMPermission(command.dmPermission)
-      .setDefaultMemberPermissions(command.defaultMemberPermission?.toString())
+      .setName(command.getName())
+      .setDescription(command.getDescription())
+      .setDMPermission(command.getDmPermission())
+      .setDefaultMemberPermissions(
+        command.getDefaultMemberPermission()?.toString()
+      )
 
     if (options && options.length > 0) {
       options.forEach((opt) => {

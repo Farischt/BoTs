@@ -18,10 +18,10 @@ export default async function loader(bot: DiscordBot): Promise<void> {
         return console.error(
           chalk.bold.bgRed(`Command ${fileName} does not exist !`)
         )
-      if (!command.name)
+      if (!command.getName())
         return console.error(
           chalk.bold.bgRed(`Command ${fileName} has no name !`)
         )
-      bot.commands.set(command.name, command)
+      bot.commands.set(command.getName(), command)
     })
 }

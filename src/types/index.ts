@@ -18,11 +18,11 @@ export interface DiscordCommandData {
 }
 
 export abstract class DiscordCommandDocument {
-  public name: string
-  public description: string
-  public dmPermission: boolean
-  public defaultMemberPermission: Discord.PermissionResolvable | null
-  public options?: DiscordCommandOptions
+  private readonly name: string
+  private readonly description: string
+  private readonly dmPermission: boolean
+  private readonly defaultMemberPermission: Discord.PermissionResolvable | null
+  private readonly options?: DiscordCommandOptions
 
   constructor(
     name: string,
@@ -38,6 +38,37 @@ export abstract class DiscordCommandDocument {
     this.options = options
   }
 
+  public getName(): string {
+    return this.name
+  }
+
+  public getDescription(): string {
+    return this.description
+  }
+
+  public getDmPermission(): boolean {
+    return this.dmPermission
+  }
+
+  public getDefaultMemberPermission(): Discord.PermissionResolvable | null {
+    return this.defaultMemberPermission
+  }
+
+  public getOptions(): DiscordCommandOptions | undefined {
+    return this.options
+  }
+
+  protected getInteractionGuildMemberAuthor(
+    guild: Discord.Guild,
+    message: Discord.ChatInputCommandInteraction
+  ): Discord.GuildMember | undefined {
+    return guild.members.cache.get(message.user.id)
+  }
+
+  protected async getOwner(guild: Discord.Guild): Promise<Discord.GuildMember> {
+    return await guild.fetchOwner()
+  }
+
   public abstract run(
     bot: DiscordBot,
     message: Discord.ChatInputCommandInteraction,
@@ -46,10 +77,6 @@ export abstract class DiscordCommandDocument {
 }
 
 export abstract class DiscordModerationCommand extends DiscordCommandDocument {
-  protected async getOwner(guild: Discord.Guild): Promise<Discord.GuildMember> {
-    return await guild.fetchOwner()
-  }
-
   protected getTarget(
     guild: Discord.Guild,
     userId: string
@@ -93,20 +120,4 @@ export abstract class DiscordModerationCommand extends DiscordCommandDocument {
 
 export interface DiscordBot extends Discord.Client {
   commands: Discord.Collection<string, DiscordCommandDocument>
-}
-
-export enum BanInteractionErrorResponse {
-  NoGuild = "No guild found",
-  NoMember = "No member to ban found !",
-  Unbanable = "I can't ban this member !",
-  SelfBan = "You can't ban yourself !",
-  OwernBan = "You can't ban the owner !",
-  AlreadyBan = "This member is already banned !",
-  HigherBan = "You can't ban a member with higher role than you !",
-  NoBanList = "No ban list found !",
-  NoPermission = "You don't have the permission to ban a member !",
-  NoAuthor = "No author found !",
-  NoOwner = "No owner found !",
-  NoReason = "No reason provided !",
-  Unknown = "Something went wrong !",
 }

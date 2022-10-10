@@ -3,9 +3,24 @@ import chalk from "chalk"
 import {
   DiscordBot,
   DiscordCommandOptions,
-  BanInteractionErrorResponse,
   DiscordModerationCommand,
 } from "../types"
+
+export enum BanInteractionErrorResponse {
+  NoGuild = "No guild found",
+  NoMember = "No member to ban found !",
+  Unbanable = "I can't ban this member !",
+  SelfBan = "You can't ban yourself !",
+  OwernBan = "You can't ban the owner !",
+  AlreadyBan = "This member is already banned !",
+  HigherBan = "You can't ban a member with higher role than you !",
+  NoBanList = "No ban list found !",
+  NoPermission = "You don't have the permission to ban a member !",
+  NoAuthor = "No author found !",
+  NoOwner = "No owner found !",
+  NoReason = "No reason provided !",
+  Unknown = "Something went wrong !",
+}
 
 class BanCommand extends DiscordModerationCommand {
   public constructor(
@@ -24,39 +39,30 @@ class BanCommand extends DiscordModerationCommand {
     return args.getUser("member")
   }
 
-  private getInteractionGuildMemberAuthor(
-    guild: Discord.Guild,
-    message: Discord.ChatInputCommandInteraction
-  ): Discord.GuildMember | undefined {
-    return guild.members.cache.get(message.user.id)
-  }
-
   private async runChecks(
     guild: Discord.Guild,
     interactionAuthor: Discord.GuildMember,
     memberToBan: Discord.GuildMember
   ): Promise<BanInteractionErrorResponse | null> {
-    let error: BanInteractionErrorResponse | null = null
     const owner = await this.getOwner(guild)
-    if (!owner) error = BanInteractionErrorResponse.NoOwner
+    if (!owner) return BanInteractionErrorResponse.NoOwner
     else if (this.isTargetOwner(memberToBan, owner))
-      error = BanInteractionErrorResponse.OwernBan
-    else if (!memberToBan.bannable)
-      error = BanInteractionErrorResponse.Unbanable
+      return BanInteractionErrorResponse.OwernBan
+    else if (!memberToBan.bannable) return BanInteractionErrorResponse.Unbanable
     else if (this.isTargetSelf(memberToBan, interactionAuthor))
-      error = BanInteractionErrorResponse.SelfBan
+      return BanInteractionErrorResponse.SelfBan
     else if (
       this.hasAuthorValidPermission(
         interactionAuthor,
         owner,
-        this.defaultMemberPermission
+        this.getDefaultMemberPermission()
       )
     )
-      error = BanInteractionErrorResponse.NoPermission
+      return BanInteractionErrorResponse.NoPermission
     else if (this.hasTargetHigherRole(memberToBan, interactionAuthor))
-      error = BanInteractionErrorResponse.HigherBan
+      return BanInteractionErrorResponse.HigherBan
 
-    return error
+    return null
   }
 
   private async getBanList(
