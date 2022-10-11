@@ -4,10 +4,11 @@ import {
   DiscordBot,
   DiscordCommandOptions,
   DiscordModerationCommand,
+  DiscordCommandInteractionResponse,
+  DiscordCommandData,
 } from "../types"
 
-export enum BanInteractionErrorResponse {
-  NoGuild = "No guild found",
+export enum BanInteractionResponse {
   NoMember = "No member to ban found !",
   Unbanable = "I can't ban this member !",
   SelfBan = "You can't ban yourself !",
@@ -16,10 +17,7 @@ export enum BanInteractionErrorResponse {
   HigherBan = "You can't ban a member with higher role than you !",
   NoBanList = "No ban list found !",
   NoPermission = "You don't have the permission to ban a member !",
-  NoAuthor = "No author found !",
-  NoOwner = "No owner found !",
   NoReason = "No reason provided !",
-  Unknown = "Something went wrong !",
 }
 
 class BanCommand extends DiscordModerationCommand {
@@ -43,14 +41,16 @@ class BanCommand extends DiscordModerationCommand {
     guild: Discord.Guild,
     interactionAuthor: Discord.GuildMember,
     memberToBan: Discord.GuildMember
-  ): Promise<BanInteractionErrorResponse | null> {
+  ): Promise<
+    BanInteractionResponse | DiscordCommandInteractionResponse | null
+  > {
     const owner = await this.getOwner(guild)
-    if (!owner) return BanInteractionErrorResponse.NoOwner
+    if (!owner) return DiscordCommandInteractionResponse.NoOwner
     else if (this.isTargetOwner(memberToBan, owner))
-      return BanInteractionErrorResponse.OwernBan
-    else if (!memberToBan.bannable) return BanInteractionErrorResponse.Unbanable
+      return BanInteractionResponse.OwernBan
+    else if (!memberToBan.bannable) return BanInteractionResponse.Unbanable
     else if (this.isTargetSelf(memberToBan, interactionAuthor))
-      return BanInteractionErrorResponse.SelfBan
+      return BanInteractionResponse.SelfBan
     else if (
       this.hasAuthorValidPermission(
         interactionAuthor,
@@ -58,9 +58,9 @@ class BanCommand extends DiscordModerationCommand {
         this.getDefaultMemberPermission()
       )
     )
-      return BanInteractionErrorResponse.NoPermission
+      return BanInteractionResponse.NoPermission
     else if (this.hasTargetHigherRole(memberToBan, interactionAuthor))
-      return BanInteractionErrorResponse.HigherBan
+      return BanInteractionResponse.HigherBan
 
     return null
   }
@@ -78,28 +78,30 @@ class BanCommand extends DiscordModerationCommand {
   ): Promise<Discord.InteractionResponse<boolean> | undefined> {
     const { guild } = message
     if (!guild) {
-      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoGuild))
-      return await message.reply(BanInteractionErrorResponse.NoGuild)
+      console.warn(chalk.bold.yellow(DiscordCommandInteractionResponse.NoGuild))
+      return await message.reply(DiscordCommandInteractionResponse.NoGuild)
     }
 
     const userToBan = this.getDiscordUserToBanFromArgs(args)
     if (!userToBan) {
-      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoMember))
-      return await message.reply(BanInteractionErrorResponse.NoMember)
+      console.warn(chalk.bold.yellow(BanInteractionResponse.NoMember))
+      return await message.reply(BanInteractionResponse.NoMember)
     }
 
     const memberToBan = this.getTarget(guild, userToBan.id)
     if (!memberToBan) {
-      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoMember))
-      return await message.reply(BanInteractionErrorResponse.NoMember)
+      console.warn(chalk.bold.yellow(BanInteractionResponse.NoMember))
+      return await message.reply(BanInteractionResponse.NoMember)
     }
     const interactionAuthor = this.getInteractionGuildMemberAuthor(
       guild,
       message
     )
     if (!interactionAuthor) {
-      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoAuthor))
-      return await message.reply(BanInteractionErrorResponse.NoAuthor)
+      console.warn(
+        chalk.bold.yellow(DiscordCommandInteractionResponse.NoAuthor)
+      )
+      return await message.reply(DiscordCommandInteractionResponse.NoAuthor)
     }
 
     const error = await this.runChecks(guild, interactionAuthor, memberToBan)
@@ -110,15 +112,14 @@ class BanCommand extends DiscordModerationCommand {
 
     const guildBans = await this.getBanList(guild)
     if (!guildBans) {
-      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.NoBanList))
-      return await message.reply(BanInteractionErrorResponse.NoBanList)
+      console.warn(chalk.bold.yellow(BanInteractionResponse.NoBanList))
+      return await message.reply(BanInteractionResponse.NoBanList)
     } else if (guildBans.get(memberToBan.id)) {
-      console.warn(chalk.bold.yellow(BanInteractionErrorResponse.AlreadyBan))
-      return await message.reply(BanInteractionErrorResponse.AlreadyBan)
+      console.warn(chalk.bold.yellow(BanInteractionResponse.AlreadyBan))
+      return await message.reply(BanInteractionResponse.AlreadyBan)
     }
 
-    const reason =
-      args.get("reason")?.value ?? BanInteractionErrorResponse.NoReason
+    const reason = args.get("reason")?.value ?? BanInteractionResponse.NoReason
 
     try {
       await userToBan.send(
@@ -136,12 +137,12 @@ class BanCommand extends DiscordModerationCommand {
       )
     } catch (err) {
       console.error(chalk.bold.red(err))
-      return await message.reply(BanInteractionErrorResponse.Unknown)
+      return await message.reply(DiscordCommandInteractionResponse.Unknown)
     }
   }
 }
 
-const banCommandData = {
+const banCommandData: DiscordCommandData = {
   name: "ban",
   description: "Ban a member",
   dmPermission: false,

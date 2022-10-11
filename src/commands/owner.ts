@@ -6,12 +6,10 @@ import {
   DiscordCommandDocument,
   DiscordCommandOptions,
   DiscordCommandData,
+  DiscordCommandInteractionResponse,
 } from "../types"
 
-export enum OwnerInteractionErrorResponse {
-  NoGuild = "No guild found",
-  NoOwner = "No owner found !",
-  NoAuthor = "No author found !",
+export enum OwnerInteractionResponse {
   Self = "Come on you are the owner, stop spamming me dude !",
 }
 
@@ -32,14 +30,14 @@ class OwnerCommand extends DiscordCommandDocument {
   ): Promise<Discord.InteractionResponse<boolean> | undefined> {
     const { guild } = message
     if (!guild) {
-      console.warn(chalk.bold.yellow(OwnerInteractionErrorResponse.NoGuild))
-      return await message.reply(OwnerInteractionErrorResponse.NoGuild)
+      console.warn(chalk.bold.yellow(DiscordCommandInteractionResponse.NoGuild))
+      return await message.reply(DiscordCommandInteractionResponse.NoGuild)
     }
 
     const owner = await this.getOwner(guild)
     if (!owner) {
-      console.warn(chalk.bold.yellow(OwnerInteractionErrorResponse.NoOwner))
-      return await message.reply(OwnerInteractionErrorResponse.NoOwner)
+      console.warn(chalk.bold.yellow(DiscordCommandInteractionResponse.NoOwner))
+      return await message.reply(DiscordCommandInteractionResponse.NoOwner)
     }
 
     const interactionAuthor = this.getInteractionGuildMemberAuthor(
@@ -47,12 +45,14 @@ class OwnerCommand extends DiscordCommandDocument {
       message
     )
     if (!interactionAuthor) {
-      console.warn(chalk.bold.yellow(OwnerInteractionErrorResponse.NoAuthor))
-      return await message.reply(OwnerInteractionErrorResponse.NoAuthor)
+      console.warn(
+        chalk.bold.yellow(DiscordCommandInteractionResponse.NoAuthor)
+      )
+      return await message.reply(DiscordCommandInteractionResponse.NoAuthor)
     }
 
     if (owner.id === interactionAuthor.id)
-      return await message.reply(OwnerInteractionErrorResponse.Self)
+      return await message.reply(OwnerInteractionResponse.Self)
     return await message.reply(
       `@${owner.user.tag} is the owner of this server ! He is a very nice guy and a f#cking GOAT !`
     )

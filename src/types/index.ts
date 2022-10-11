@@ -9,6 +9,10 @@ export interface DiscordCommandOption {
 
 export type DiscordCommandOptions = DiscordCommandOption[]
 
+export interface DiscordBot extends Discord.Client {
+  commands: Discord.Collection<string, DiscordCommandDocument>
+}
+
 export interface DiscordCommandData {
   name: string
   description: string
@@ -118,6 +122,9 @@ export abstract class DiscordModerationCommand extends DiscordCommandDocument {
   }
 }
 
-export interface DiscordBot extends Discord.Client {
-  commands: Discord.Collection<string, DiscordCommandDocument>
+export enum DiscordCommandInteractionResponse {
+  NoGuild = "No guild found",
+  NoOwner = "No owner found !",
+  NoAuthor = "No author found !",
+  Unknown = "Something went wrong !",
 }
