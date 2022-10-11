@@ -10,7 +10,16 @@
     "dev": "nodemon",
     "build": "rimraf ./build && tsc",
     "lint": "yarn eslint . --ext .ts",
-    "style": "yarn prettier --write ."
+    "style": "yarn prettier --write .",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*": "prettier --write"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "dependencies": {
     "discord.js": "^14.5.0",
@@ -26,6 +35,7 @@
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
+    "husky": "^8.0.1",
     "nodemon": "^2.0.20",
     "rimraf": "^3.0.2",
     "ts-node": "^10.9.1",
