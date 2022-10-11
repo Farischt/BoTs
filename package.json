@@ -9,8 +9,9 @@
     "start": "yarn build && node dist/index.js",
     "dev": "nodemon",
     "build": "rimraf ./build && tsc",
-    "lint": "yarn eslint . --ext .ts",
-    "style": "yarn prettier --write .",
+    "lint": "eslint . --ext .ts",
+    "lint-staged": "yarn lint && prettier --write . && git add -A .",
+    "format": "prettier --write .",
     "prepare": "husky install"
   },
   "dependencies": {
