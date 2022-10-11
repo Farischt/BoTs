@@ -25,7 +25,7 @@ class PingCommand extends DiscordCommandDocument {
   }
 }
 
-const pingCommandData: DiscordCommandData = {
+export const pingCommandData: DiscordCommandData = {
   name: "ping",
   description: "Pong!",
   dmPermission: true,

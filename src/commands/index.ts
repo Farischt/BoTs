@@ -1,3 +1,3 @@
-export { default as ban } from "./ban"
-export { default as ping } from "./ping"
-export { default as owner } from "./owner"
+export { default as BanCommand } from "./ban"
+export { default as PingCommand } from "./ping"
+export { default as OwnerCommand } from "./owner"

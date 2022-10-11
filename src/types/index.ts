@@ -26,6 +26,7 @@ export abstract class DiscordCommandDocument {
   private readonly description: string
   private readonly dmPermission: boolean
   private readonly defaultMemberPermission: Discord.PermissionResolvable | null
+  // TODO: Update options to be null instead of undefined
   private readonly options?: DiscordCommandOptions
 
   constructor(
@@ -127,4 +128,12 @@ export enum DiscordCommandInteractionResponse {
   NoOwner = "No owner found !",
   NoAuthor = "No author found !",
   Unknown = "Something went wrong !",
+}
+
+export enum DiscordMemberRole {
+  Owner = "owner",
+  Admin = "admin",
+  Moderator = "moderator",
+  User = "user",
+  Default = "user",
 }

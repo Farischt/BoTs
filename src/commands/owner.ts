@@ -54,7 +54,7 @@ class OwnerCommand extends DiscordCommandDocument {
     if (owner.id === interactionAuthor.id)
       return await message.reply(OwnerInteractionResponse.Self)
     return await message.reply(
-      `@${owner.user.tag} is the owner of this server ! He is a very nice guy and a f#cking GOAT !`
+      `<@${owner.user.id}> is the owner of this server ! He is a very nice guy and a f#cking GOAT !`
     )
   }
 }

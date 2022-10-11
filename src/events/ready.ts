@@ -7,6 +7,7 @@ export default async function ready(
   bot: DiscordBot,
   message: Discord.Message
 ): Promise<void> {
-  if (bot.user) console.log(chalk.blue(`\n${bot.user.tag} is ready !`))
+  if (!bot.user) return
+  console.log(chalk.blue(`${bot.user.tag} is ready !`))
   await slashCommandsLoader(bot)
 }
