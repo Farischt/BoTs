@@ -11,7 +11,7 @@
     "build": "rimraf ./dist && tsc ",
     "test": "jest",
     "lint": "tsc --pretty --noEmit && eslint . --ext .ts",
-    "lint-staged": "yarn lint && yarn format && git add -A .",
+    "lint-staged": "yarn lint && prettier --check . && git add -A .",
     "format": "prettier --write .",
     "prepare": "husky install"
   },
