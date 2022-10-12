@@ -8,7 +8,7 @@ export default async function guildMemberAdd(
   bot: DiscordBot,
   newMember: Discord.GuildMember
 ): Promise<void> {
-  const textChannel = await newMember.guild.channels.fetch(MAIN_TEXT_CHANNEL_ID)
+  const textChannel = newMember.guild.channels.cache.get(MAIN_TEXT_CHANNEL_ID)
   if (!textChannel) return
   const defaultRole = newMember.guild.roles.cache.find(
     (role) => role.name === DiscordMemberRole.Default

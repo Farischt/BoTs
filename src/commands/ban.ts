@@ -142,7 +142,7 @@ class BanCommand extends DiscordModerationCommand {
   }
 }
 
-const banCommandData: DiscordCommandData = {
+export const banCommandData: DiscordCommandData = {
   name: "ban",
   description: "Ban a member",
   dmPermission: false,

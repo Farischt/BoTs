@@ -59,7 +59,7 @@ class OwnerCommand extends DiscordCommandDocument {
   }
 }
 
-const ownerCommandData: DiscordCommandData = {
+export const ownerCommandData: DiscordCommandData = {
   name: "owner",
   description: "Retrieves the owner of the guild.",
   dmPermission: true,
