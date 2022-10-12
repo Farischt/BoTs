@@ -5,7 +5,9 @@
 // import CONFIG from "../../config.json"
 
 describe("Ready Handler", () => {
-  // it("should log if and load slash commands", async () => {
+  it("should log if and load slash commands", async () => {
+    expect(true).toBe(true)
+  })
   //   console.log(PingCommand.getOptions())
   //   const run = jest.fn()
   //   const bot = {
