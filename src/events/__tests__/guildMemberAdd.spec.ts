@@ -72,11 +72,13 @@ describe("guildMemberAdd Handler", () => {
     } as unknown as Discord.GuildMember
     const botMock = {} as unknown as DiscordBot
 
+    // TODO : prevent the following test not to send the webhook
     await guildMemberAdd(botMock, newMemberMock)
     expect(newMemberMock.roles.add).toBeCalledTimes(1)
-    // TODO : Find a way to test if the role has been added to the member
-    // expect(newMemberMock.roles.cache).toContain({
-    //   name: DiscordMemberRole.Default,
-    // })
+    expect(newMemberMock.roles.cache.toJSON()).toEqual([
+      {
+        name: DiscordMemberRole.Default,
+      },
+    ])
   })
 })
