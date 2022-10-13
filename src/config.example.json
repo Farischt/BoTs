@@ -1,5 +1,13 @@
 {
   "INSTRUCTIONS": "Create a config.json file in this directory. Copy the contents of this file into the config.json file and replace the values with your own.",
-  "DISCORD_TOKEN": "your-token-here",
-  "COMMAND_PREFIX": "your-prefix-here"
+  "DISCORD_TOKEN": "Your discord token",
+  "MAIN_TEXT_CHANNEL_ID": "Your text channel ID",
+  "COMMAND_PREFIX": "!",
+  "BOT_USER_ID": "Your bot user ID",
+  "WEBHOOKS": {
+    "WELCOMER": {
+      "ID": "Your webhook id",
+      "TOKEN": "Your webhook token"
+    }
+  }
 }
