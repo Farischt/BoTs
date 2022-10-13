@@ -3,6 +3,8 @@ import { DiscordBot, DiscordMemberRole } from "../../types"
 import { guildMemberAdd } from "../index"
 import { MAIN_TEXT_CHANNEL_ID } from "../../config.json"
 
+const USER_TAG = "newMember#1234"
+
 describe("guildMemberAdd Handler", () => {
   it("should return if text channel is not", async () => {
     const newMemberMock = {
@@ -43,7 +45,7 @@ describe("guildMemberAdd Handler", () => {
   it("should add role to new member", async () => {
     const newMemberMock = {
       user: {
-        tag: "newMember#1234",
+        tag: USER_TAG,
         avatarURL: jest.fn(),
       } as unknown as Discord.User,
       guild: {

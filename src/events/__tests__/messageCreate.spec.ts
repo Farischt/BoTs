@@ -1,12 +1,15 @@
 import Discord from "discord.js"
-import { PingCommand } from "../../commands"
 import { DiscordBot, DiscordCommandDocument } from "../../types"
 import { messageCreate, MessageErrorResponse } from "../index"
+
+const INVALID_CONTENT = "hello"
+const VALID_CONTENT = "!ping"
+const VALID_COMMAND = "ping"
 
 describe("message create handler", () => {
   it("should return if message does not start with command prefix", async () => {
     const messageMock = {
-      content: "hello",
+      content: INVALID_CONTENT,
     } as unknown as Discord.Message
     const botMock = {} as unknown as DiscordBot
     const result = await messageCreate(botMock, messageMock)
@@ -15,7 +18,7 @@ describe("message create handler", () => {
 
   it("should return if message does not have a command", async () => {
     const messageMock = {
-      content: "!hello",
+      content: VALID_CONTENT,
       reply: jest.fn(),
     } as unknown as Discord.Message
     const botMock = {
@@ -31,20 +34,24 @@ describe("message create handler", () => {
   })
 
   it("should return a message reply if cmd exist", async () => {
+    const commandMock = {
+      name: VALID_COMMAND,
+      getName: jest.fn(() => VALID_COMMAND),
+    } as unknown as DiscordCommandDocument
     const messageMock = {
-      content: `!${PingCommand.getName()}`,
+      content: VALID_CONTENT,
       reply: jest.fn(),
     } as unknown as Discord.Message
     const botMock = {
       commands: new Discord.Collection<
         Discord.Snowflake,
         DiscordCommandDocument
-      >([["ping", PingCommand]]),
+      >([[VALID_COMMAND, commandMock]]),
     } as unknown as DiscordBot
 
     await messageCreate(botMock, messageMock)
     expect(messageMock.reply).toBeCalledWith(
-      `${MessageErrorResponse.CommandDepreciated} (/${PingCommand.getName()})`
+      `${MessageErrorResponse.CommandDepreciated} (/${commandMock.getName()})`
     )
   })
 })

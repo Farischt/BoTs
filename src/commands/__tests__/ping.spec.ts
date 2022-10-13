@@ -3,7 +3,7 @@ import { PingCommand } from "../"
 import { DiscordBot } from "../../types"
 
 describe("Ping command", () => {
-  it("It should run the command and reply", async () => {
+  it("It should reply", async () => {
     const botMock = {
       ws: {
         ping: 100,
