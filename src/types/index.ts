@@ -131,9 +131,9 @@ export enum DiscordCommandInteractionResponse {
 }
 
 export enum DiscordMemberRole {
-  Owner = "owner",
-  Admin = "admin",
-  Moderator = "moderator",
-  User = "user",
-  Default = "user",
+  Owner = "@owner",
+  Admin = "@admin",
+  Moderator = "@moderator",
+  User = "@user",
+  Default = "@user",
 }
