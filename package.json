@@ -9,7 +9,7 @@
     "start": "node dist/index.js",
     "dev": "nodemon",
     "build": "rimraf ./dist && tsc ",
-    "test": "jest",
+    "test": "jest --coverage",
     "lint": "tsc --pretty --noEmit && eslint . --ext .ts",
     "lint-staged": "yarn lint && prettier --check .",
     "format": "prettier --write .",
