@@ -42,7 +42,10 @@ describe("guildMemberAdd Handler", () => {
 
   it("should add role to new member", async () => {
     const newMemberMock = {
-      user: { tag: "newMember#1234" } as Discord.User,
+      user: {
+        tag: "newMember#1234",
+        avatarURL: jest.fn(),
+      } as unknown as Discord.User,
       guild: {
         channels: {
           cache: new Discord.Collection<string, Discord.GuildBasedChannel>([
