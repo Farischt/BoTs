@@ -27,12 +27,12 @@ class EmitCommand extends DiscordCommandDocument {
     if (!event) return
 
     if (!this.eventChoices.includes(event)) {
-      console.error(chalk.bold.red(`Invalid event ${event}`))
+      console.error(chalk.bold.red(`Invalid event : ${event}.`))
       await message.reply(`Invalid event : ${event}.`)
       return
     }
-    bot.emit(event, message.member)
     if (!message.member) return
+    bot.emit(event, message.member)
     await message.reply(
       `Event ${event} emitted by <@${message.member.user.id}>`
     )
