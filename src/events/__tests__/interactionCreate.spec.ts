@@ -8,7 +8,10 @@ describe("Interaction Hanlder", () => {
       isChatInputCommand: () => false,
     } as unknown as Discord.Interaction
     const bot = {
-      commands: new Map<string, DiscordCommandDocument>(),
+      commands: new Discord.Collection<
+        Discord.Snowflake,
+        DiscordCommandDocument
+      >(),
     } as unknown as DiscordBot
 
     const result = await interactionCreate(bot, interaction)
@@ -21,7 +24,10 @@ describe("Interaction Hanlder", () => {
       commandName: "anyCommand",
     } as unknown as Discord.Interaction
     const bot = {
-      commands: new Map<string, DiscordCommandDocument>(),
+      commands: new Discord.Collection<
+        Discord.Snowflake,
+        DiscordCommandDocument
+      >(),
     } as unknown as DiscordBot
 
     const result = await interactionCreate(bot, interaction)
@@ -36,9 +42,10 @@ describe("Interaction Hanlder", () => {
     } as unknown as Discord.ChatInputCommandInteraction<Discord.CacheType>
     const run = jest.fn()
     const bot = {
-      commands: new Map<string, DiscordCommandDocument>([
-        ["anyCommand", { run } as unknown as DiscordCommandDocument],
-      ]),
+      commands: new Discord.Collection<
+        Discord.Snowflake,
+        DiscordCommandDocument
+      >([["anyCommand", { run } as unknown as DiscordCommandDocument]]),
     } as unknown as DiscordBot
 
     const result = await interactionCreate(bot, interaction)
