@@ -3,7 +3,7 @@ import Discord from "discord.js"
 import CONFIG from "../config.json"
 import { DiscordBot } from "../types"
 
-enum MessageErrorResponse {
+export enum MessageErrorResponse {
   InvalidCommandInput = "Invalid command input !",
   CommandNotFound = "Command not found !",
   CommandDepreciated = "Bip bip bip... Please use slash commands instead.",
