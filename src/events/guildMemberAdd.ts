@@ -1,20 +1,40 @@
 import Discord from "discord.js"
 import chalk from "chalk"
 import { DiscordBot, DiscordMemberRole } from "../types"
-import { MAIN_TEXT_CHANNEL_ID } from "../config.json"
+import { MAIN_TEXT_CHANNEL_ID, WEBHOOKS } from "../config.json"
 
-// TODO : Find a way to send a message to the user when he joins the server
 export default async function guildMemberAdd(
   bot: DiscordBot,
   newMember: Discord.GuildMember
 ): Promise<void> {
   const textChannel = newMember.guild.channels.cache.get(MAIN_TEXT_CHANNEL_ID)
   if (!textChannel) return
+
   const defaultRole = newMember.guild.roles.cache.find(
     (role) => role.name === DiscordMemberRole.Default
   )
   if (!defaultRole) return
+
+  const { user, guild } = newMember
+
+  const Welcomer = new Discord.WebhookClient({
+    id: WEBHOOKS.WELCOMER.ID,
+    token: WEBHOOKS.WELCOMER.TOKEN,
+  })
+
+  const welcomeEmbed = new Discord.EmbedBuilder()
+    .setColor("Aqua")
+    .setAuthor({ name: user.tag, iconURL: user.avatarURL() ?? undefined })
+    .setDescription(
+      `Welcome to ${newMember.user.tag} to **${guild.name}** ! \n
+      Member count : **${guild.memberCount}**
+    `
+    )
+    .setTimestamp()
+    .setFooter({ text: `ID: ${user.id}` })
+
   await newMember.roles.add(defaultRole)
+  await Welcomer.send({ embeds: [welcomeEmbed] })
   console.log(
     chalk.green(
       `New member ${newMember.user.tag} joined the server and has been assigned the role ${defaultRole.name}.`
