@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 import chalk from "chalk"
-import { DiscordBot, DiscordMemberRole } from "../types"
-import { MAIN_TEXT_CHANNEL_ID, WEBHOOKS } from "../config.json"
+import { DiscordBot, DiscordMemberRole, DiscordWebHookName } from "../types"
+import { MAIN_TEXT_CHANNEL_ID } from "../config.json"
 
 export default async function guildMemberAdd(
   bot: DiscordBot,
@@ -29,14 +29,10 @@ export default async function guildMemberAdd(
     .setFooter({ text: `ID: ${user.id}` })
 
   await newMember.roles.add(defaultRole)
-  // TODO : prevent the following to be called during tests
-  if (process.env.NODE_ENV !== "test") {
-    const Welcomer = new Discord.WebhookClient({
-      id: WEBHOOKS.WELCOMER.ID,
-      token: WEBHOOKS.WELCOMER.TOKEN,
-    })
-    await Welcomer.send({ embeds: [welcomeEmbed] })
-  }
+
+  const Welcomer = bot.webhooks.get(DiscordWebHookName.Welcomer)
+  if (!Welcomer) return
+  await Welcomer.send({ embeds: [welcomeEmbed] })
 
   console.log(
     chalk.green(
