@@ -11,6 +11,7 @@ export type DiscordCommandOptions = DiscordCommandOption[]
 
 export interface DiscordBot extends Discord.Client {
   commands: Discord.Collection<string, DiscordCommandDocument>
+  webhooks: Discord.Collection<string, Discord.WebhookClient>
 }
 
 export interface DiscordCommandData {
@@ -136,4 +137,8 @@ export enum DiscordMemberRole {
   Moderator = "@moderator",
   User = "@user",
   Default = "@user",
+}
+
+export enum DiscordWebHookName {
+  Welcomer = "Welcomer",
 }

@@ -1,5 +1,5 @@
 import Discord from "discord.js"
-import { DiscordBot, DiscordMemberRole } from "../../types"
+import { DiscordBot, DiscordMemberRole, DiscordWebHookName } from "../../types"
 import { guildMemberAdd } from "../index"
 import { MAIN_TEXT_CHANNEL_ID } from "../../config.json"
 
@@ -42,6 +42,60 @@ describe("guildMemberAdd Handler", () => {
     expect(result).toBe(undefined)
   })
 
+  it("should return if Welcomer webhook is not found", async () => {
+    const newMemberMock = {
+      user: {
+        tag: USER_TAG,
+        avatarURL: jest.fn(),
+      } as unknown as Discord.User,
+      guild: {
+        channels: {
+          cache: new Discord.Collection<string, Discord.GuildBasedChannel>([
+            [MAIN_TEXT_CHANNEL_ID, {} as Discord.GuildBasedChannel],
+          ]),
+        },
+        roles: {
+          cache: new Discord.Collection<Discord.Snowflake, Discord.Role>([
+            [
+              DiscordMemberRole.Default,
+              { name: DiscordMemberRole.Default } as Discord.Role,
+            ],
+          ]),
+        },
+      },
+      roles: {
+        cache: new Discord.Collection<Discord.Snowflake, Discord.Role>(),
+        add: jest.fn(() =>
+          newMemberMock.roles.cache.set(DiscordMemberRole.Default, {
+            name: DiscordMemberRole.Default,
+          } as Discord.Role)
+        ),
+      } as unknown as Discord.GuildMemberRoleManager,
+    } as unknown as Discord.GuildMember
+
+    const botMock = {
+      webhooks: new Discord.Collection<string, Discord.WebhookClient>([
+        [
+          DiscordWebHookName.Welcomer,
+          undefined as unknown as Discord.WebhookClient,
+        ],
+      ]),
+    } as unknown as DiscordBot
+
+    const getHookMethod = jest.spyOn(botMock.webhooks, "get")
+
+    const result = await guildMemberAdd(botMock, newMemberMock)
+    expect(result).toBeUndefined()
+    expect(getHookMethod).toBeCalled()
+    expect(getHookMethod).toBeCalledWith(DiscordWebHookName.Welcomer)
+    expect(newMemberMock.roles.add).toBeCalledTimes(1)
+    expect(newMemberMock.roles.cache.toJSON()).toEqual([
+      {
+        name: DiscordMemberRole.Default,
+      },
+    ])
+  })
+
   it("should add role to new member", async () => {
     const newMemberMock = {
       user: {
@@ -72,10 +126,22 @@ describe("guildMemberAdd Handler", () => {
         ),
       } as unknown as Discord.GuildMemberRoleManager,
     } as unknown as Discord.GuildMember
-    const botMock = {} as unknown as DiscordBot
 
-    // TODO : prevent the following test not to send the webhook
+    const botMock = {
+      webhooks: new Discord.Collection<string, Discord.WebhookClient>([
+        [
+          DiscordWebHookName.Welcomer,
+          { send: jest.fn() } as unknown as Discord.WebhookClient,
+        ],
+      ]),
+    } as unknown as DiscordBot
+
+    const getHookMethod = jest.spyOn(botMock.webhooks, "get")
+
     await guildMemberAdd(botMock, newMemberMock)
+    expect(getHookMethod).toBeCalled()
+    expect(getHookMethod).toBeCalledWith(DiscordWebHookName.Welcomer)
+    expect(botMock.webhooks.get(DiscordWebHookName.Welcomer)?.send).toBeCalled()
     expect(newMemberMock.roles.add).toBeCalledTimes(1)
     expect(newMemberMock.roles.cache.toJSON()).toEqual([
       {
