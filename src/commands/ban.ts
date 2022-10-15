@@ -20,7 +20,7 @@ export enum BanInteractionResponse {
   NoReason = "No reason provided !",
 }
 
-class BanCommand extends DiscordModerationCommand {
+export class BanCommand extends DiscordModerationCommand {
   public constructor(
     name: string,
     description: string,
@@ -35,6 +35,12 @@ class BanCommand extends DiscordModerationCommand {
     args: Discord.ChatInputCommandInteraction["options"]
   ): Discord.User | null {
     return args.getUser("member")
+  }
+
+  private async getBanList(
+    guild: Discord.Guild
+  ): Promise<Discord.Collection<string, Discord.GuildBan>> {
+    return await guild.bans.fetch()
   }
 
   private async runChecks(
@@ -63,12 +69,6 @@ class BanCommand extends DiscordModerationCommand {
       return BanInteractionResponse.HigherBan
 
     return null
-  }
-
-  private async getBanList(
-    guild: Discord.Guild
-  ): Promise<Discord.Collection<string, Discord.GuildBan>> {
-    return await guild.bans.fetch()
   }
 
   public async run(

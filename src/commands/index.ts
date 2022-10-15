@@ -1,4 +1,9 @@
-export { default as BanCommand, banCommandData } from "./ban"
+export {
+  default as BanCommandInstance,
+  banCommandData,
+  BanCommand,
+  BanInteractionResponse,
+} from "./ban"
 export { default as PingCommand, pingCommandData } from "./ping"
 export {
   default as OwnerCommand,
