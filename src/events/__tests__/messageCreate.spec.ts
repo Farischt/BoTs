@@ -16,6 +16,19 @@ describe("message create handler", () => {
     expect(result).toBeUndefined()
   })
 
+  it("should return a message if message  is empty", () => {
+    const messageMock = {
+      content: "!",
+      reply: jest.fn(),
+    } as unknown as Discord.Message
+    const botMock = {} as unknown as DiscordBot
+    messageCreate(botMock, messageMock)
+    expect(messageMock.reply).toBeCalledTimes(1)
+    expect(messageMock.reply).toBeCalledWith(
+      MessageErrorResponse.InvalidCommandInput
+    )
+  })
+
   it("should return if message does not have a command", async () => {
     const messageMock = {
       content: VALID_CONTENT,
@@ -28,6 +41,7 @@ describe("message create handler", () => {
       >(),
     } as unknown as DiscordBot
     await messageCreate(botMock, messageMock)
+    expect(messageMock.reply).toBeCalledTimes(1)
     expect(messageMock.reply).toBeCalledWith(
       MessageErrorResponse.CommandNotFound
     )
@@ -50,6 +64,7 @@ describe("message create handler", () => {
     } as unknown as DiscordBot
 
     await messageCreate(botMock, messageMock)
+    expect(messageMock.reply).toBeCalledTimes(1)
     expect(messageMock.reply).toBeCalledWith(
       `${MessageErrorResponse.CommandDepreciated} (/${commandMock.getName()})`
     )
