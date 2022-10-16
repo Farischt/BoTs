@@ -90,3 +90,5 @@ export abstract class DiscordModerationCommand extends DiscordCommandDocument {
     return target.id === author.id
   }
 }
+
+export abstract class DiscordMusicCommand extends DiscordCommandDocument {}

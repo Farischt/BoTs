@@ -9,5 +9,5 @@ export default async function ready(
 ): Promise<void> {
   if (!bot.user) return
   await slashCommandsLoader(bot)
-  Logger.info(`${bot.user.tag} is ready !`)
+  Logger.log(`${bot.user.tag} is ready !`)
 }

@@ -1,4 +1,8 @@
-export { DiscordCommandDocument, DiscordModerationCommand } from "./class"
+export {
+  DiscordCommandDocument,
+  DiscordModerationCommand,
+  DiscordMusicCommand,
+} from "./class"
 export {
   DiscordBot,
   DiscordCommandData,

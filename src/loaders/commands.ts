@@ -6,17 +6,25 @@ import { Logger } from "../utils"
 
 const commandsDir = path.join(__dirname, "../commands")
 
-export default async function loader(bot: DiscordBot): Promise<void> {
-  ;(await fs.readdir(commandsDir))
-    .filter((file) => file.endsWith(".ts"))
-    .forEach(async (fileName) => {
-      if (fileName === "index.ts") return
-      const command: DiscordCommandDocument = (
-        await import(`${commandsDir}/${fileName}`)
-      ).default
-      if (!command) return Logger.error(`Command ${fileName} does not exist !`)
-      if (!command.getName())
-        return Logger.error(`Command ${fileName} has no name !`)
-      bot.commands.set(command.getName(), command)
+export default async function loader(
+  bot: DiscordBot,
+  dir = commandsDir
+): Promise<void> {
+  ;(await fs.readdir(dir, { withFileTypes: true }))
+    .filter((file) => file.name !== "__tests__" && file.name !== "index.ts")
+    .forEach(async (file) => {
+      if (file.isDirectory()) {
+        await loader(bot, path.join(dir, file.name))
+      } else {
+        if (!file.name.endsWith(".ts")) return
+        const command: DiscordCommandDocument = (
+          await import(`${dir}/${file.name}`)
+        ).default
+        if (!command)
+          return Logger.error(`Command ${file.name} does not exist !`)
+        if (!command.getName())
+          return Logger.error(`Command ${file.name} has no name !`)
+        bot.commands.set(command.getName(), command)
+      }
     })
 }

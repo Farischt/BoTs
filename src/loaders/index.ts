@@ -11,8 +11,8 @@ export {
 } from "./slashCommands"
 export { commandsLoader, eventsLoader, webhooksLoader }
 
-export default function loader(bot: DiscordBot): void {
-  commandsLoader(bot)
-  eventsLoader(bot)
-  webhooksLoader(bot)
+export default async function loader(bot: DiscordBot): Promise<void> {
+  await commandsLoader(bot)
+  await eventsLoader(bot)
+  await webhooksLoader(bot)
 }

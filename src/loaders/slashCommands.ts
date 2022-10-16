@@ -77,6 +77,7 @@ export default async function loader(bot: DiscordBot): Promise<void> {
     await rest.put(Routes.applicationCommands(bot.user?.id ?? ""), {
       body: commands,
     })
+    Logger.log("Successfully registered application commands.")
   } catch (error) {
     Logger.error("Slash commands failed to load\n")
   }

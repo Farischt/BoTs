@@ -10,12 +10,12 @@ export class Logger {
     return Logger.instance
   }
 
-  public info(message: string): void {
-    console.info(chalk.bold.green(message))
-  }
-
   public log(message: string): void {
     console.log(chalk.bold.blue(message))
+  }
+
+  public info(message: string): void {
+    console.info(chalk.bold.green(message))
   }
 
   public warn(message: string): void {
