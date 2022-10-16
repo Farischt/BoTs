@@ -1,4 +1,5 @@
 import { PingCommand, pingCommandData } from "../../commands"
+import { DiscordCommandOptionType } from "../../types"
 import { createSlashCommand, addSlashCommandOption } from "../slashCommands"
 
 describe("Slash Commands Loader", () => {
@@ -22,7 +23,7 @@ describe("Slash Commands Loader", () => {
     const options = {
       name: "user",
       description: "User to ping",
-      type: "user",
+      type: DiscordCommandOptionType.User,
       required: true,
     }
 
@@ -46,7 +47,7 @@ describe("Slash Commands Loader", () => {
     const options = {
       name: "test",
       description: "test description",
-      type: "string",
+      type: DiscordCommandOptionType.String,
       required: true,
     }
 
@@ -69,7 +70,7 @@ describe("Slash Commands Loader", () => {
     const options = {
       name: "test",
       description: "test description",
-      type: "boolean",
+      type: DiscordCommandOptionType.Boolean,
       required: true,
     }
     const error = jest.spyOn(console, "error")
