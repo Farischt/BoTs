@@ -6,6 +6,7 @@ import {
   DiscordModerationCommand,
   DiscordCommandInteractionResponse,
   DiscordCommandData,
+  DiscordCommandOptionType,
 } from "../types"
 
 export enum BanInteractionResponse {
@@ -56,14 +57,6 @@ export class BanCommand extends DiscordModerationCommand {
     else if (!memberToBan.bannable) return BanInteractionResponse.Unbanable
     else if (this.isTargetSelf(memberToBan, interactionAuthor))
       return BanInteractionResponse.SelfBan
-    // else if (
-    //   this.hasAuthorValidPermission(
-    //     interactionAuthor,
-    //     owner,
-    //     this.getDefaultMemberPermission()
-    //   )
-    // )
-    //   return BanInteractionResponse.NoPermission
     else if (this.hasTargetHigherRole(memberToBan, interactionAuthor))
       return BanInteractionResponse.HigherBan
 
@@ -155,13 +148,13 @@ export const banCommandData: DiscordCommandData = {
   defaultMemberPermission: Discord.PermissionFlagsBits.BanMembers,
   options: [
     {
-      type: "user",
+      type: DiscordCommandOptionType.User,
       name: "member",
       description: "The member to ban",
       required: true,
     },
     {
-      type: "string",
+      type: DiscordCommandOptionType.String,
       name: "reason",
       description: "The reason for the ban",
       required: false,
