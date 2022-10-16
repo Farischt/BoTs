@@ -1,6 +1,6 @@
 import Discord from "discord.js"
-import chalk from "chalk"
 import { DiscordBot } from "../types"
+import { Logger } from "../utils"
 
 export default async function interactionCreate(
   bot: DiscordBot,
@@ -9,6 +9,6 @@ export default async function interactionCreate(
   if (!interaction.isChatInputCommand()) return
   const cmd = bot.commands.get(interaction.commandName)
   if (!cmd) return
-  console.info(chalk.green(`Command ${interaction.commandName} launched`))
+  Logger.info(`Command ${interaction.commandName} launched`)
   cmd.run(bot, interaction, interaction.options)
 }

@@ -1,4 +1,3 @@
-import chalk from "chalk"
 import Discord from "discord.js"
 import {
   DiscordBot,
@@ -7,6 +6,7 @@ import {
   DiscordCommandData,
   DiscordCommandOptionType,
 } from "../types"
+import { Logger } from "../utils"
 
 class EmitCommand extends DiscordCommandDocument {
   public readonly eventChoices = ["guildMemberAdd", "guildMemberRemove"]
@@ -28,7 +28,7 @@ class EmitCommand extends DiscordCommandDocument {
     if (!event) return
 
     if (!this.eventChoices.includes(event)) {
-      console.error(chalk.bold.red(`Invalid event : ${event}.`))
+      Logger.error(`Invalid event : ${event}.`)
       await message.reply(`Invalid event : ${event}.`)
       return
     }

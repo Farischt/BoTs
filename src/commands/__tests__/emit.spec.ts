@@ -1,7 +1,7 @@
 import Discord from "discord.js"
-import chalk from "chalk"
 import { EmitCommand } from "../"
 import { DiscordBot } from "../../types"
+import { Logger } from "../../utils"
 
 const INVALID_EVENT = "invalidEvent"
 const VALID_EVENT = "guildMemberRemove"
@@ -32,14 +32,13 @@ describe("Ping command", () => {
         getString: jest.fn(() => event),
       },
     } as unknown as Discord.ChatInputCommandInteraction
-    const log = jest.spyOn(console, "error")
+    const error = jest.spyOn(Logger, "error")
 
     const result = await EmitCommand.run(botMock, messageMock)
     expect(messageMock.options.getString).toHaveBeenCalledWith(STRING_OPTION)
     expect(messageMock.options.getString).toHaveBeenCalledTimes(1)
-    expect(log).toHaveBeenCalledWith(
-      chalk.bold.red(`Invalid event : ${event}.`)
-    )
+    expect(error).toHaveBeenCalledWith(`Invalid event : ${event}.`)
+
     expect(result).toBeUndefined()
   })
 

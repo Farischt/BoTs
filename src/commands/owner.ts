@@ -1,5 +1,4 @@
 import Discord from "discord.js"
-import chalk from "chalk"
 
 import {
   DiscordBot,
@@ -8,6 +7,7 @@ import {
   DiscordCommandData,
   DiscordCommandInteractionResponse,
 } from "../types"
+import { Logger } from "../utils"
 
 export enum OwnerInteractionResponse {
   Self = "Come on you are the owner, stop spamming me dude !",
@@ -30,13 +30,13 @@ class OwnerCommand extends DiscordCommandDocument {
   ): Promise<Discord.InteractionResponse<boolean> | undefined> {
     const { guild } = message
     if (!guild) {
-      console.warn(chalk.bold.yellow(DiscordCommandInteractionResponse.NoGuild))
+      Logger.warn(DiscordCommandInteractionResponse.NoGuild)
       return await message.reply(DiscordCommandInteractionResponse.NoGuild)
     }
 
     const owner = await this.getOwner(guild)
     if (!owner) {
-      console.warn(chalk.bold.yellow(DiscordCommandInteractionResponse.NoOwner))
+      Logger.warn(DiscordCommandInteractionResponse.NoOwner)
       return await message.reply(DiscordCommandInteractionResponse.NoOwner)
     }
 
@@ -45,9 +45,7 @@ class OwnerCommand extends DiscordCommandDocument {
       message
     )
     if (!interactionAuthor) {
-      console.warn(
-        chalk.bold.yellow(DiscordCommandInteractionResponse.NoAuthor)
-      )
+      Logger.warn(DiscordCommandInteractionResponse.NoAuthor)
       return await message.reply(DiscordCommandInteractionResponse.NoAuthor)
     }
 

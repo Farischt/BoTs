@@ -1,10 +1,12 @@
 import Discord from "discord.js"
-import chalk from "chalk"
 import { OwnerCommand, OwnerInteractionResponse } from "../"
 import { DiscordBot, DiscordCommandInteractionResponse } from "../../types"
+import { Logger } from "../../utils"
 
 const USER_ID = "123456789"
 const OTHER_USER_ID = "987654321"
+
+const warn = jest.spyOn(Logger, "warn")
 
 describe("Ping command", () => {
   it("It should warn if guild doesn't exist", async () => {
@@ -13,17 +15,14 @@ describe("Ping command", () => {
       reply: jest.fn(),
     } as unknown as Discord.ChatInputCommandInteraction
     const botMock = {} as unknown as DiscordBot
-    const log = jest.spyOn(console, "warn")
 
     await OwnerCommand.run(botMock, messageMock)
     expect(messageMock.reply).toBeCalledTimes(1)
     expect(messageMock.reply).toBeCalledWith(
       DiscordCommandInteractionResponse.NoGuild
     )
-    expect(log).toBeCalledTimes(1)
-    expect(log).toBeCalledWith(
-      chalk.bold.yellow(DiscordCommandInteractionResponse.NoGuild)
-    )
+    expect(warn).toBeCalledTimes(1)
+    expect(warn).toBeCalledWith(DiscordCommandInteractionResponse.NoGuild)
   })
 
   it("should warn if owner doesn't exist", async () => {
@@ -34,7 +33,6 @@ describe("Ping command", () => {
       reply: jest.fn(),
     } as unknown as Discord.ChatInputCommandInteraction
     const botMock = {} as unknown as DiscordBot
-    const log = jest.spyOn(console, "warn")
 
     await OwnerCommand.run(botMock, messageMock)
     expect(messageMock.guild?.fetchOwner).toBeCalledTimes(1)
@@ -42,10 +40,8 @@ describe("Ping command", () => {
     expect(messageMock.reply).toBeCalledWith(
       DiscordCommandInteractionResponse.NoOwner
     )
-    expect(log).toBeCalledTimes(1)
-    expect(log).toBeCalledWith(
-      chalk.bold.yellow(DiscordCommandInteractionResponse.NoOwner)
-    )
+    expect(warn).toBeCalledTimes(1)
+    expect(warn).toBeCalledWith(DiscordCommandInteractionResponse.NoOwner)
   })
 
   it("should warn if author doesn't exist", async () => {
@@ -64,7 +60,6 @@ describe("Ping command", () => {
       reply: jest.fn(),
     } as unknown as Discord.ChatInputCommandInteraction
     const botMock = {} as unknown as DiscordBot
-    const log = jest.spyOn(console, "warn")
 
     await OwnerCommand.run(botMock, messageMock)
     expect(messageMock.guild?.fetchOwner).toBeCalledTimes(1)
@@ -76,10 +71,8 @@ describe("Ping command", () => {
     expect(messageMock.reply).toBeCalledWith(
       DiscordCommandInteractionResponse.NoAuthor
     )
-    expect(log).toBeCalledTimes(1)
-    expect(log).toBeCalledWith(
-      chalk.bold.yellow(DiscordCommandInteractionResponse.NoAuthor)
-    )
+    expect(warn).toBeCalledTimes(1)
+    expect(warn).toBeCalledWith(DiscordCommandInteractionResponse.NoAuthor)
   })
 
   it("should reply if author is owner", async () => {

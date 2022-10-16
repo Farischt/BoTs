@@ -1,9 +1,9 @@
 import fs from "fs/promises"
 import path from "path"
-import chalk from "chalk"
 import Discord from "discord.js"
 
 import { DiscordBot } from "../types"
+import { Logger } from "../utils"
 
 const webHookDir = path.join(__dirname, "../hooks")
 
@@ -15,10 +15,8 @@ export default async function loader(bot: DiscordBot): Promise<void> {
       const webHook: Discord.WebhookClient = (
         await import(`${webHookDir}/${fileName}`)
       ).default
-      if (!webHook)
-        return console.error(
-          chalk.bold.bgRed(`WebHook ${fileName} does not exist !`)
-        )
+      if (!webHook) return Logger.error(`WebHook ${fileName} does not exist !`)
+
       // - 3 in order to remove the .ts extension to the name
       bot.webhooks.set(
         `${

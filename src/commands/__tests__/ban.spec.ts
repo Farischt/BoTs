@@ -1,12 +1,14 @@
 import Discord from "discord.js"
-import chalk from "chalk"
 import { BanCommandInstance, BanInteractionResponse } from "../"
 import { DiscordBot, DiscordCommandInteractionResponse } from "../../types"
+import { Logger } from "../../utils"
 
 const USER_TO_BAN_ID = "1234"
 const MESSAGE_AUTHOR_ID = "5678"
 const GUILD_OWNER_ID = "9012"
 const ERROR_MESSAGE = "Error message"
+
+const warn = jest.spyOn(Logger, "warn")
 
 describe("Ban command", () => {
   it("Should warn and return message if guild doesn't exist", async () => {
@@ -16,13 +18,10 @@ describe("Ban command", () => {
     const messageMock = {
       reply: jest.fn(),
     } as unknown as Discord.ChatInputCommandInteraction
-    const warn = jest.spyOn(console, "warn")
 
     await BanCommandInstance.run(botMock, messageMock, argsMock)
     expect(warn).toBeCalledTimes(1)
-    expect(warn).toBeCalledWith(
-      chalk.bold.yellow(DiscordCommandInteractionResponse.NoGuild)
-    )
+    expect(warn).toBeCalledWith(DiscordCommandInteractionResponse.NoGuild)
     expect(messageMock.reply).toBeCalledTimes(1)
     expect(messageMock.reply).toBeCalledWith(
       DiscordCommandInteractionResponse.NoGuild
@@ -38,13 +37,10 @@ describe("Ban command", () => {
       reply: jest.fn(),
       guild: {} as Discord.Guild,
     } as unknown as Discord.ChatInputCommandInteraction
-    const warn = jest.spyOn(console, "warn")
 
     await BanCommandInstance.run(botMock, messageMock, argsMock)
     expect(warn).toBeCalledTimes(1)
-    expect(warn).toBeCalledWith(
-      chalk.bold.yellow(BanInteractionResponse.NoUser)
-    )
+    expect(warn).toBeCalledWith(BanInteractionResponse.NoUser)
     expect(argsMock.getUser).toBeCalled()
     expect(argsMock.getUser).toBeCalledWith("member")
     expect(messageMock.reply).toBeCalledTimes(1)
@@ -68,13 +64,10 @@ describe("Ban command", () => {
         },
       } as unknown as Discord.Guild,
     } as unknown as Discord.ChatInputCommandInteraction
-    const warn = jest.spyOn(console, "warn")
 
     await BanCommandInstance.run(botMock, messageMock, argsMock)
     expect(warn).toBeCalledTimes(1)
-    expect(warn).toBeCalledWith(
-      chalk.bold.yellow(BanInteractionResponse.NoMember)
-    )
+    expect(warn).toBeCalledWith(BanInteractionResponse.NoMember)
     expect(argsMock.getUser).toBeCalled()
     expect(argsMock.getUser).toBeCalledWith("member")
     expect(messageMock.guild?.members.cache.get).toBeCalledTimes(1)
@@ -103,8 +96,6 @@ describe("Ban command", () => {
         },
       } as unknown as Discord.Guild,
     } as unknown as Discord.ChatInputCommandInteraction
-
-    const warn = jest.spyOn(console, "warn")
     const cacheGet = jest.spyOn(
       messageMock.guild?.members.cache as unknown as Discord.Collection<
         Discord.Snowflake,
@@ -115,9 +106,7 @@ describe("Ban command", () => {
 
     await BanCommandInstance.run(botMock, messageMock, argsMock)
     expect(warn).toBeCalledTimes(1)
-    expect(warn).toBeCalledWith(
-      chalk.bold.yellow(DiscordCommandInteractionResponse.NoAuthor)
-    )
+    expect(warn).toBeCalledWith(DiscordCommandInteractionResponse.NoAuthor)
     expect(argsMock.getUser).toBeCalled()
     expect(argsMock.getUser).toBeCalledWith("member")
     expect(cacheGet).toBeCalledTimes(2)
@@ -154,7 +143,6 @@ describe("Ban command", () => {
       } as unknown as Discord.Guild,
     } as unknown as Discord.ChatInputCommandInteraction
 
-    const warn = jest.spyOn(console, "warn")
     const cacheGet = jest.spyOn(
       messageMock.guild?.members.cache as unknown as Discord.Collection<
         Discord.Snowflake,
@@ -165,9 +153,7 @@ describe("Ban command", () => {
 
     await BanCommandInstance.run(botMock, messageMock, argsMock)
     expect(warn).toBeCalledTimes(1)
-    expect(warn).toBeCalledWith(
-      chalk.bold.yellow(DiscordCommandInteractionResponse.NoOwner)
-    )
+    expect(warn).toBeCalledWith(DiscordCommandInteractionResponse.NoOwner)
     expect(argsMock.getUser).toBeCalled()
     expect(argsMock.getUser).toBeCalledWith("member")
     expect(cacheGet).toBeCalledTimes(2)
@@ -212,7 +198,6 @@ describe("Ban command", () => {
           .fn()
           .mockReturnValue({ id: GUILD_OWNER_ID } as Discord.User),
       } as unknown as Discord.ChatInputCommandInteraction["options"]
-      const warn = jest.spyOn(console, "warn")
 
       const cacheGet = jest.spyOn(
         messageMock.guild?.members.cache as unknown as Discord.Collection<
@@ -224,9 +209,7 @@ describe("Ban command", () => {
 
       await BanCommandInstance.run(botMock, messageMock, argsMock)
       expect(warn).toBeCalledTimes(1)
-      expect(warn).toBeCalledWith(
-        chalk.bold.yellow(BanInteractionResponse.OwernBan)
-      )
+      expect(warn).toBeCalledWith(BanInteractionResponse.OwernBan)
       expect(argsMock.getUser).toBeCalled()
       expect(argsMock.getUser).toBeCalledWith("member")
       expect(cacheGet).toBeCalledTimes(2)
@@ -271,7 +254,6 @@ describe("Ban command", () => {
           .fn()
           .mockReturnValue({ id: USER_TO_BAN_ID } as Discord.User),
       } as unknown as Discord.ChatInputCommandInteraction["options"]
-      const warn = jest.spyOn(console, "warn")
 
       const cacheGet = jest.spyOn(
         messageMock.guild?.members.cache as unknown as Discord.Collection<
@@ -283,9 +265,7 @@ describe("Ban command", () => {
 
       await BanCommandInstance.run(botMock, messageMock, argsMock)
       expect(warn).toBeCalledTimes(1)
-      expect(warn).toBeCalledWith(
-        chalk.bold.yellow(BanInteractionResponse.Unbanable)
-      )
+      expect(warn).toBeCalledWith(BanInteractionResponse.Unbanable)
       expect(argsMock.getUser).toBeCalled()
       expect(argsMock.getUser).toBeCalledWith("member")
       expect(cacheGet).toBeCalledTimes(2)
@@ -329,7 +309,6 @@ describe("Ban command", () => {
           .fn()
           .mockReturnValue({ id: MESSAGE_AUTHOR_ID } as Discord.User),
       } as unknown as Discord.ChatInputCommandInteraction["options"]
-      const warn = jest.spyOn(console, "warn")
 
       const cacheGet = jest.spyOn(
         messageMock.guild?.members.cache as unknown as Discord.Collection<
@@ -341,9 +320,7 @@ describe("Ban command", () => {
 
       await BanCommandInstance.run(botMock, messageMock, argsMock)
       expect(warn).toBeCalledTimes(1)
-      expect(warn).toBeCalledWith(
-        chalk.bold.yellow(BanInteractionResponse.SelfBan)
-      )
+      expect(warn).toBeCalledWith(BanInteractionResponse.SelfBan)
       expect(argsMock.getUser).toBeCalled()
       expect(argsMock.getUser).toBeCalledWith("member")
       expect(cacheGet).toBeCalledTimes(2)
@@ -403,7 +380,6 @@ describe("Ban command", () => {
           .fn()
           .mockReturnValue({ id: USER_TO_BAN_ID } as Discord.User),
       } as unknown as Discord.ChatInputCommandInteraction["options"]
-      const warn = jest.spyOn(console, "warn")
 
       const cacheGet = jest.spyOn(
         messageMock.guild?.members.cache as unknown as Discord.Collection<
@@ -415,9 +391,7 @@ describe("Ban command", () => {
 
       await BanCommandInstance.run(botMock, messageMock, argsMock)
       expect(warn).toBeCalledTimes(1)
-      expect(warn).toBeCalledWith(
-        chalk.bold.yellow(BanInteractionResponse.HigherBan)
-      )
+      expect(warn).toBeCalledWith(BanInteractionResponse.HigherBan)
       expect(argsMock.getUser).toBeCalled()
       expect(argsMock.getUser).toBeCalledWith("member")
       expect(cacheGet).toBeCalledTimes(2)
@@ -480,7 +454,6 @@ describe("Ban command", () => {
         .fn()
         .mockReturnValue({ id: USER_TO_BAN_ID } as Discord.User),
     } as unknown as Discord.ChatInputCommandInteraction["options"]
-    const warn = jest.spyOn(console, "warn")
 
     const cacheGet = jest.spyOn(
       messageMock.guild?.members.cache as unknown as Discord.Collection<
@@ -492,9 +465,7 @@ describe("Ban command", () => {
 
     await BanCommandInstance.run(botMock, messageMock, argsMock)
     expect(warn).toBeCalledTimes(1)
-    expect(warn).toBeCalledWith(
-      chalk.bold.yellow(BanInteractionResponse.NoBanList)
-    )
+    expect(warn).toBeCalledWith(BanInteractionResponse.NoBanList)
     expect(argsMock.getUser).toBeCalled()
     expect(argsMock.getUser).toBeCalledWith("member")
     expect(cacheGet).toBeCalledTimes(2)
@@ -568,7 +539,6 @@ describe("Ban command", () => {
         .fn()
         .mockReturnValue({ id: USER_TO_BAN_ID } as Discord.User),
     } as unknown as Discord.ChatInputCommandInteraction["options"]
-    const warn = jest.spyOn(console, "warn")
 
     const cacheGet = jest.spyOn(
       messageMock.guild?.members.cache as unknown as Discord.Collection<
@@ -580,9 +550,7 @@ describe("Ban command", () => {
 
     await BanCommandInstance.run(botMock, messageMock, argsMock)
     expect(warn).toBeCalledTimes(1)
-    expect(warn).toBeCalledWith(
-      chalk.bold.yellow(BanInteractionResponse.AlreadyBan)
-    )
+    expect(warn).toBeCalledWith(BanInteractionResponse.AlreadyBan)
     expect(argsMock.getUser).toBeCalled()
     expect(argsMock.getUser).toBeCalledWith("member")
     expect(cacheGet).toBeCalledTimes(2)
@@ -763,7 +731,7 @@ describe("Ban command", () => {
       >,
       "get"
     )
-    const error = jest.spyOn(console, "error")
+    const error = jest.spyOn(Logger, "error")
 
     await BanCommandInstance.run(botMock, messageMock, argsMock)
 

@@ -1,7 +1,7 @@
 import Discord from "discord.js"
-import chalk from "chalk"
 import { DiscordBot, DiscordMemberRole, DiscordWebHookName } from "../types"
 import { MAIN_TEXT_CHANNEL_ID } from "../config.json"
+import { Logger } from "../utils"
 
 export default async function guildMemberAdd(
   bot: DiscordBot,
@@ -34,9 +34,7 @@ export default async function guildMemberAdd(
   if (!Welcomer) return
   await Welcomer.send({ embeds: [welcomeEmbed] })
 
-  console.log(
-    chalk.green(
-      `New member ${newMember.user.tag} joined the server and has been assigned the role ${defaultRole.name}.`
-    )
+  Logger.info(
+    `New member ${newMember.user.tag} joined the server and has been assigned the role ${defaultRole.name}.`
   )
 }
