@@ -4,18 +4,15 @@ import {
   DiscordBot,
   DiscordCommandDocument,
   DiscordCommandOption,
+  DiscordCommandOptionType,
 } from "../types"
 
 export function addSlashCommandOption(
   slashCommand: Discord.SlashCommandBuilder,
   option: DiscordCommandOption
 ): void {
-  const optionType =
-    option.type.slice(0, 1).toUpperCase() +
-    option.type.slice(1, option.type.length)
-
-  switch (optionType) {
-    case "User":
+  switch (option.type) {
+    case DiscordCommandOptionType.User:
       slashCommand.addUserOption((opt) =>
         opt
           .setName(option.name)
@@ -23,16 +20,24 @@ export function addSlashCommandOption(
           .setRequired(option.required)
       )
       break
-    case "String":
-      slashCommand.addStringOption((opt) =>
+    case DiscordCommandOptionType.String:
+      slashCommand.addStringOption((opt) => {
         opt
           .setName(option.name)
           .setDescription(option.description)
           .setRequired(option.required)
-      )
+        if (option.choices) {
+          option.choices?.forEach((choice) => {
+            opt.addChoices(choice)
+          })
+        }
+        return opt
+      })
       break
     default:
-      console.error(chalk.bold.bgRed(`Not supported option type ${optionType}`))
+      console.error(
+        chalk.bold.bgRed(`Not supported option type ${option.type}`)
+      )
   }
 }
 
@@ -63,6 +68,7 @@ export function createSlashCommands(
     }
     commands.push(slashCommand)
   })
+
   return commands
 }
 

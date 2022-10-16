@@ -5,6 +5,7 @@ import {
   DiscordCommandDocument,
   DiscordCommandOptions,
   DiscordCommandData,
+  DiscordCommandOptionType,
 } from "../types"
 
 class EmitCommand extends DiscordCommandDocument {
@@ -46,10 +47,14 @@ export const emitCommandData: DiscordCommandData = {
   defaultMemberPermission: Discord.PermissionFlagsBits.Administrator,
   options: [
     {
-      type: "string",
+      type: DiscordCommandOptionType.String,
       name: "event",
       description: "Event to emit",
       required: true,
+      choices: [
+        { name: "guild member add", value: "guildMemberAdd" },
+        { name: "guild member remove", value: "guildMemberRemove" },
+      ],
     },
   ],
 }
