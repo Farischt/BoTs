@@ -43,11 +43,11 @@ export abstract class DiscordCommandDocument {
     return this.options
   }
 
-  protected getInteractionGuildMemberAuthor(
+  protected getGuildMember(
     guild: Discord.Guild,
-    message: Discord.ChatInputCommandInteraction
+    userId: string
   ): Discord.GuildMember | undefined {
-    return guild.members.cache.get(message.user.id)
+    return guild.members.cache.get(userId)
   }
 
   protected async getOwner(guild: Discord.Guild): Promise<Discord.GuildMember> {
@@ -56,19 +56,12 @@ export abstract class DiscordCommandDocument {
 
   public abstract run(
     bot: DiscordBot,
-    message: Discord.ChatInputCommandInteraction,
-    args: Discord.ChatInputCommandInteraction["options"]
+    message: Discord.CommandInteraction,
+    args: Discord.CommandInteraction["options"]
   ): Promise<any>
 }
 
 export abstract class DiscordModerationCommand extends DiscordCommandDocument {
-  protected getTarget(
-    guild: Discord.Guild,
-    userId: string
-  ): Discord.GuildMember | undefined {
-    return guild.members.cache.get(userId)
-  }
-
   protected isTargetOwner(
     target: Discord.GuildMember,
     owner: Discord.GuildMember
@@ -76,18 +69,18 @@ export abstract class DiscordModerationCommand extends DiscordCommandDocument {
     return target.id === owner.id
   }
 
-  protected hasTargetHigherRole(
-    target: Discord.GuildMember,
-    author: Discord.GuildMember
-  ): boolean {
-    return author.roles.highest.position < target.roles.highest.position
-  }
-
   protected isTargetSelf(
     target: Discord.GuildMember,
     author: Discord.GuildMember
   ): boolean {
     return target.id === author.id
+  }
+
+  protected hasTargetHigherRole(
+    target: Discord.GuildMember,
+    author: Discord.GuildMember
+  ): boolean {
+    return author.roles.highest.position < target.roles.highest.position
   }
 }
 

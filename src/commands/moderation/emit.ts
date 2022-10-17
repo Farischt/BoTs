@@ -5,10 +5,10 @@ import {
   DiscordCommandOptions,
   DiscordCommandData,
   DiscordCommandOptionType,
-} from "../types"
-import { Logger } from "../utils"
+} from "../../types"
+import { Logger } from "../../utils"
 
-class EmitCommand extends DiscordCommandDocument {
+export class EmitCommand extends DiscordCommandDocument {
   public readonly eventChoices = ["guildMemberAdd", "guildMemberRemove"]
   public constructor(
     name: string,

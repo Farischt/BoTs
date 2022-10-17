@@ -1,6 +1,6 @@
 import Discord from "discord.js"
-import { PingCommand } from "../"
-import { DiscordBot } from "../../types"
+import { PingCommandInstance } from "../.."
+import { DiscordBot } from "../../../types"
 
 describe("Ping command", () => {
   it("It should reply", async () => {
@@ -14,7 +14,7 @@ describe("Ping command", () => {
       reply: jest.fn(),
     } as unknown as Discord.ChatInputCommandInteraction
 
-    const result = await PingCommand.run(botMock, messageMock)
+    const result = await PingCommandInstance.run(botMock, messageMock)
     expect(messageMock.reply).toHaveBeenCalledWith(
       `Pong ! ${botMock.ws.ping}ms`
     )

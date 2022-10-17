@@ -1,7 +1,7 @@
 import Discord from "discord.js"
-import { OwnerCommand, OwnerInteractionResponse } from "../"
-import { DiscordBot, DiscordCommandInteractionResponse } from "../../types"
-import { Logger } from "../../utils"
+import { OwnerCommandInstance, OwnerInteractionResponse } from "../.."
+import { DiscordBot, DiscordCommandInteractionResponse } from "../../../types"
+import { Logger } from "../../../utils"
 
 const USER_ID = "123456789"
 const OTHER_USER_ID = "987654321"
@@ -16,7 +16,7 @@ describe("Ping command", () => {
     } as unknown as Discord.ChatInputCommandInteraction
     const botMock = {} as unknown as DiscordBot
 
-    await OwnerCommand.run(botMock, messageMock)
+    await OwnerCommandInstance.run(botMock, messageMock)
     expect(messageMock.reply).toBeCalledTimes(1)
     expect(messageMock.reply).toBeCalledWith(
       DiscordCommandInteractionResponse.NoGuild
@@ -34,7 +34,7 @@ describe("Ping command", () => {
     } as unknown as Discord.ChatInputCommandInteraction
     const botMock = {} as unknown as DiscordBot
 
-    await OwnerCommand.run(botMock, messageMock)
+    await OwnerCommandInstance.run(botMock, messageMock)
     expect(messageMock.guild?.fetchOwner).toBeCalledTimes(1)
     expect(messageMock.reply).toBeCalledTimes(1)
     expect(messageMock.reply).toBeCalledWith(
@@ -61,7 +61,7 @@ describe("Ping command", () => {
     } as unknown as Discord.ChatInputCommandInteraction
     const botMock = {} as unknown as DiscordBot
 
-    await OwnerCommand.run(botMock, messageMock)
+    await OwnerCommandInstance.run(botMock, messageMock)
     expect(messageMock.guild?.fetchOwner).toBeCalledTimes(1)
     expect(messageMock.guild?.members.cache.get).toBeCalledTimes(1)
     expect(messageMock.guild?.members.cache.get).toBeCalledWith(
@@ -96,7 +96,7 @@ describe("Ping command", () => {
     } as unknown as Discord.ChatInputCommandInteraction
     const botMock = {} as unknown as DiscordBot
 
-    await OwnerCommand.run(botMock, messageMock)
+    await OwnerCommandInstance.run(botMock, messageMock)
     expect(messageMock.guild?.fetchOwner).toBeCalledTimes(1)
     expect(messageMock.guild?.members.cache.get).toBeCalledTimes(1)
     expect(messageMock.guild?.members.cache.get).toBeCalledWith(
@@ -128,7 +128,7 @@ describe("Ping command", () => {
     } as unknown as Discord.ChatInputCommandInteraction
     const botMock = {} as unknown as DiscordBot
 
-    await OwnerCommand.run(botMock, messageMock)
+    await OwnerCommandInstance.run(botMock, messageMock)
     expect(messageMock.guild?.fetchOwner).toBeCalledTimes(1)
     expect(messageMock.guild?.members.cache.get).toBeCalledTimes(1)
     expect(messageMock.guild?.members.cache.get).toBeCalledWith(

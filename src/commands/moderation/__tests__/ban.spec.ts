@@ -1,7 +1,7 @@
 import Discord from "discord.js"
-import { BanCommandInstance, BanInteractionResponse } from "../"
-import { DiscordBot, DiscordCommandInteractionResponse } from "../../types"
-import { Logger } from "../../utils"
+import { BanCommandInstance, BanInteractionResponse } from "../.."
+import { DiscordBot, DiscordCommandInteractionResponse } from "../../../types"
+import { Logger } from "../../../utils"
 
 const USER_TO_BAN_ID = "1234"
 const MESSAGE_AUTHOR_ID = "5678"

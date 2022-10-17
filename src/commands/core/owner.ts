@@ -6,14 +6,14 @@ import {
   DiscordCommandOptions,
   DiscordCommandData,
   DiscordCommandInteractionResponse,
-} from "../types"
-import { Logger } from "../utils"
+} from "../../types"
+import { Logger } from "../../utils"
 
 export enum OwnerInteractionResponse {
   Self = "Come on you are the owner, stop spamming me dude !",
 }
 
-class OwnerCommand extends DiscordCommandDocument {
+export class OwnerCommand extends DiscordCommandDocument {
   public constructor(
     name: string,
     description: string,
@@ -40,10 +40,7 @@ class OwnerCommand extends DiscordCommandDocument {
       return await message.reply(DiscordCommandInteractionResponse.NoOwner)
     }
 
-    const interactionAuthor = this.getInteractionGuildMemberAuthor(
-      guild,
-      message
-    )
+    const interactionAuthor = this.getGuildMember(guild, message.user.id)
     if (!interactionAuthor) {
       Logger.warn(DiscordCommandInteractionResponse.NoAuthor)
       return await message.reply(DiscordCommandInteractionResponse.NoAuthor)

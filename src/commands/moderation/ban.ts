@@ -6,8 +6,8 @@ import {
   DiscordCommandInteractionResponse,
   DiscordCommandData,
   DiscordCommandOptionType,
-} from "../types"
-import { Logger } from "../utils"
+} from "../../types"
+import { Logger } from "../../utils"
 
 export enum BanInteractionResponse {
   NoUser = "No discord user to ban found !",
@@ -80,16 +80,13 @@ export class BanCommand extends DiscordModerationCommand {
       return await message.reply(BanInteractionResponse.NoUser)
     }
 
-    const memberToBan = this.getTarget(guild, userToBan.id)
+    const memberToBan = this.getGuildMember(guild, userToBan.id)
     if (!memberToBan) {
       Logger.warn(BanInteractionResponse.NoMember)
       return await message.reply(BanInteractionResponse.NoMember)
     }
 
-    const interactionAuthor = this.getInteractionGuildMemberAuthor(
-      guild,
-      message
-    )
+    const interactionAuthor = this.getGuildMember(guild, message.user.id)
     if (!interactionAuthor) {
       Logger.warn(DiscordCommandInteractionResponse.NoAuthor)
       return await message.reply(DiscordCommandInteractionResponse.NoAuthor)

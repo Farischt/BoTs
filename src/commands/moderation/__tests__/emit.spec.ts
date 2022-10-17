@@ -1,7 +1,7 @@
 import Discord from "discord.js"
-import { EmitCommand } from "../"
-import { DiscordBot } from "../../types"
-import { Logger } from "../../utils"
+import { EmitCommandInstance } from "../.."
+import { DiscordBot } from "../../../types"
+import { Logger } from "../../../utils"
 
 const INVALID_EVENT = "invalidEvent"
 const VALID_EVENT = "guildMemberRemove"
@@ -17,7 +17,7 @@ describe("Ping command", () => {
       },
     } as unknown as Discord.ChatInputCommandInteraction
 
-    const result = await EmitCommand.run(botMock, messageMock)
+    const result = await EmitCommandInstance.run(botMock, messageMock)
     expect(messageMock.options.getString).toHaveBeenCalledWith(STRING_OPTION)
     expect(messageMock.options.getString).toHaveBeenCalledTimes(1)
     expect(result).toBeUndefined()
@@ -34,7 +34,7 @@ describe("Ping command", () => {
     } as unknown as Discord.ChatInputCommandInteraction
     const error = jest.spyOn(Logger, "error")
 
-    const result = await EmitCommand.run(botMock, messageMock)
+    const result = await EmitCommandInstance.run(botMock, messageMock)
     expect(messageMock.options.getString).toHaveBeenCalledWith(STRING_OPTION)
     expect(messageMock.options.getString).toHaveBeenCalledTimes(1)
     expect(error).toHaveBeenCalledWith(`Invalid event : ${event}.`)
@@ -55,7 +55,7 @@ describe("Ping command", () => {
       },
     } as unknown as Discord.ChatInputCommandInteraction
 
-    const result = await EmitCommand.run(botMock, messageMock)
+    const result = await EmitCommandInstance.run(botMock, messageMock)
     expect(messageMock.options.getString).toHaveBeenCalledWith(STRING_OPTION)
     expect(messageMock.options.getString).toHaveBeenCalledTimes(1)
     expect(botMock.emit).not.toHaveBeenCalled()
@@ -79,7 +79,7 @@ describe("Ping command", () => {
       },
     } as unknown as Discord.ChatInputCommandInteraction
 
-    const result = await EmitCommand.run(botMock, messageMock)
+    const result = await EmitCommandInstance.run(botMock, messageMock)
     expect(messageMock.options.getString).toHaveBeenCalledWith(STRING_OPTION)
     expect(messageMock.options.getString).toHaveBeenCalledTimes(1)
     expect(botMock.emit).toHaveBeenCalledWith(event, messageMock.member)

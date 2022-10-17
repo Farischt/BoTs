@@ -4,9 +4,9 @@ import {
   DiscordCommandDocument,
   DiscordCommandOptions,
   DiscordCommandData,
-} from "../types"
+} from "../../types"
 
-class PingCommand extends DiscordCommandDocument {
+export class PingCommand extends DiscordCommandDocument {
   public constructor(
     name: string,
     description: string,

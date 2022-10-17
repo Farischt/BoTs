@@ -1,10 +1,10 @@
-import { PingCommand, pingCommandData } from "../../commands"
+import { PingCommandInstance, pingCommandData } from "../../commands"
 import { DiscordCommandOptionType } from "../../types"
 import { createSlashCommand, addSlashCommandOption } from "../slashCommands"
 
 describe("Slash Commands Loader", () => {
   it("Should create a slash command", () => {
-    const command = PingCommand
+    const command = PingCommandInstance
     const slashCommand = createSlashCommand(command)
     expect(slashCommand.toJSON()).toEqual({
       name: pingCommandData.name,
@@ -17,7 +17,7 @@ describe("Slash Commands Loader", () => {
   })
 
   it("Should create and add user option to a slash command", () => {
-    const command = PingCommand
+    const command = PingCommandInstance
     const slashCommand = createSlashCommand(command)
     const addUserOption = jest.spyOn(slashCommand, "addUserOption")
     const options = {
@@ -41,7 +41,7 @@ describe("Slash Commands Loader", () => {
   })
 
   it("Should create and add string option to a slash command", () => {
-    const command = PingCommand
+    const command = PingCommandInstance
     const slashCommand = createSlashCommand(command)
     const addStringOption = jest.spyOn(slashCommand, "addStringOption")
     const options = {
@@ -65,7 +65,7 @@ describe("Slash Commands Loader", () => {
   })
 
   it("Should log unsupported option type", () => {
-    const command = PingCommand
+    const command = PingCommandInstance
     const slashCommand = createSlashCommand(command)
     const options = {
       name: "test",
