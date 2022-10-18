@@ -1,10 +1,10 @@
-import "@lavaclient/queue/register"
 import Discord from "discord.js"
 import { Node } from "lavaclient"
-
 import { DISCORD_TOKEN, LAVALINK_CONNECTION } from "./config.json"
 import { DiscordBot, DiscordCommandDocument } from "./types"
 import loader from "./loaders"
+// ts error cannot find module '' has implicit any type
+require("@lavaclient/queue/register")
 ;(async (): Promise<void> => {
   const intents = new Discord.IntentsBitField(3276799)
   const bot = new Discord.Client({ intents }) as DiscordBot
