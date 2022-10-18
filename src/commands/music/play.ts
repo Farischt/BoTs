@@ -1,5 +1,6 @@
 import Discord from "discord.js"
 import { Addable } from "@lavaclient/queue"
+import { LoadType } from "@lavaclient/types/v3"
 import {
   DiscordBot,
   DiscordMusicCommand,
@@ -15,7 +16,18 @@ interface GetMusicResponse {
   error: string
 }
 
-class PlayCommand extends DiscordMusicCommand {
+enum PlayInteractionResponse {
+  NoQuery = "No query provided !",
+  LoadFailed = "Failed to load your track !",
+  NoMatch = "No result matches your query !",
+  NoVoiceMusicChannel = "No voice channel found !",
+  NotInVoiceChannel = "You must be in a voice channel to play music !",
+  NotSameChannel = "You must be in the same voice channel as me to play music !",
+  NotMusicChannel = "You must be in the `Music` voice channel to play music !",
+  Success = "Successfully played your music !",
+}
+
+export class PlayCommand extends DiscordMusicCommand {
   public constructor(
     name: string,
     description: string,
@@ -24,6 +36,12 @@ class PlayCommand extends DiscordMusicCommand {
     options?: DiscordCommandOptions
   ) {
     super(name, description, dmPermission, defaultMemberPermission, options)
+  }
+
+  private getQueryToPlayFromArgs(
+    args: Discord.ChatInputCommandInteraction["options"]
+  ): string | null {
+    return args.getString("song")
   }
 
   private async getMusic(
@@ -37,23 +55,24 @@ class PlayCommand extends DiscordMusicCommand {
     let error: string = ""
 
     switch (results.loadType) {
-      case "LOAD_FAILED":
-        error = "Failed to load track"
+      case LoadType.LoadFailed:
+        error = PlayInteractionResponse.LoadFailed
         break
-      case "NO_MATCHES":
-        error = "No matches"
+      case LoadType.NoMatches:
+        error = PlayInteractionResponse.NoMatch
         break
-      case "PLAYLIST_LOADED":
+      case LoadType.PlaylistLoaded:
         tracks = results.tracks
         success = `Queued playlist [**${results.playlistInfo.name}**](${query}), it has a total of **${tracks.length}** tracks.`
         break
-      case "TRACK_LOADED":
+      case LoadType.TrackLoaded:
         tracks = [results.tracks[0]]
         success = `Queued track [**${results.tracks[0].info.title}**](${results.tracks[0].info.uri})`
         break
-      case "SEARCH_RESULT":
-        tracks = results.tracks
-        success = `Queued [**${results.tracks[0].info.title}**](${results.tracks[0].info.uri})`
+      case LoadType.SearchResult:
+        // Same as the previous case but we want to make sur to queue the first most revelant result
+        tracks = [results.tracks[0]]
+        success = `Queued track [**${results.tracks[0].info.title}**](${results.tracks[0].info.uri})`
         break
     }
 
@@ -63,56 +82,98 @@ class PlayCommand extends DiscordMusicCommand {
   public async run(
     bot: DiscordBot,
     message: Discord.ChatInputCommandInteraction
-  ): Promise<any> {
+  ): Promise<Discord.InteractionResponse<boolean> | undefined | any> {
     const guild = message.guild
     if (!guild)
-      return await message.reply(DiscordCommandInteractionResponse.NoGuild)
+      return await message.reply({
+        content: DiscordCommandInteractionResponse.NoGuild,
+        ephemeral: true,
+      })
 
-    const query = message.options.getString("song")
-    if (!query) return await message.reply("No query provided")
+    const query = this.getQueryToPlayFromArgs(message.options)
+    if (!query)
+      return await message.reply({
+        content: PlayInteractionResponse.NoQuery,
+        ephemeral: true,
+      })
 
     const author = this.getGuildMember(guild, message.user.id)
     if (!author)
-      return await message.reply(DiscordCommandInteractionResponse.NoAuthor)
+      return await message.reply({
+        content: DiscordCommandInteractionResponse.NoAuthor,
+        ephemeral: true,
+      })
 
     if (!author.voice.channelId)
-      return await message.reply("You are not in a voice channel")
+      return await message.reply({
+        content: PlayInteractionResponse.NotInVoiceChannel,
+        ephemeral: true,
+      })
 
-    const vc = this.getAuthorVoiceState(guild, author)?.channel
-    if (!vc)
-      return await message.reply(
-        DiscordCommandInteractionResponse.NoVoiceChannel
-      )
+    const authorVoiceChannel = this.getAuthorVoiceState(guild, author)?.channel
+    if (!authorVoiceChannel) {
+      return await message.reply({
+        content: DiscordCommandInteractionResponse.NoVoiceChannel,
+        ephemeral: true,
+      })
+    }
 
-    const mainChannel = this.getMainTextChannel(guild)
-    if (!mainChannel)
-      return await message.reply(
-        DiscordCommandInteractionResponse.NoMainChannel
-      )
+    const musicVoiceChannel = this.getMusicVoiceChannel(guild)
+    if (!musicVoiceChannel) {
+      return await message.reply(PlayInteractionResponse.NoVoiceMusicChannel)
+    } else if (authorVoiceChannel.id !== musicVoiceChannel.id) {
+      return await message.reply({
+        content: PlayInteractionResponse.NotMusicChannel,
+        ephemeral: true,
+      })
+    }
+
+    const musicTextChannel = this.getMusicTextChannel(guild)
+    if (!musicTextChannel)
+      return await message.reply({
+        content: DiscordCommandInteractionResponse.NoMainChannel,
+        ephemeral: true,
+      })
 
     const player =
       bot.music.players.get(guild.id) ?? bot.music.createPlayer(guild.id)
-    if (player && player.channelId !== vc.id)
-      return await message.reply("You are not in the same voice channel as me")
 
-    const { tracks, success, error } = await this.getMusic(bot, query)
+    if (player.channelId && player.channelId !== authorVoiceChannel.id)
+      return await message.reply({
+        content: PlayInteractionResponse.NotSameChannel,
+        ephemeral: true,
+      })
 
+    const started = player.playing || player.paused
+    if (started) {
+      return await message.reply({
+        content:
+          "The music player is already in use ! Prefere using `/add` command",
+        ephemeral: true,
+      })
+    }
+
+    const { tracks, error, success } = await this.getMusic(bot, query)
     if (success) {
-      await message.reply(success)
+      await message.reply({
+        content: success,
+        ephemeral: true,
+      })
     } else if (error) {
-      return await message.reply(error)
+      return await message.reply({ content: error, ephemeral: true })
     }
 
     if (!player.connected) {
-      player.queue.channel = mainChannel as Discord.TextBasedChannel
-      player.connect(vc.id, { deafened: true })
+      player.queue.channel = musicTextChannel
+      player.connect(musicVoiceChannel.id, { deafened: true })
     }
 
-    const started = player.playing || player.paused
     player.queue.add(tracks, { requester: author.id, next: true })
-    if (!started) {
-      await player.queue.start()
-    }
+    await player.queue.start()
+    return await message.followUp({
+      content: PlayInteractionResponse.Success,
+      ephemeral: true,
+    })
   }
 }
 
