@@ -3,6 +3,8 @@ export enum DiscordCommandInteractionResponse {
   NoOwner = "No owner found !",
   NoAuthor = "No author found !",
   Unknown = "Something went wrong !",
+  NoVoiceChannel = "No voice channel found !",
+  NoMainChannel = "No main channel found !",
 }
 
 export enum DiscordMemberRole {

@@ -1,12 +1,12 @@
 import Discord from "discord.js"
-import { Player } from "discord-player"
+import { Node } from "lavaclient"
 import { DiscordCommandDocument } from "./"
 import { DiscordCommandOptionType } from "./enum"
 
 export interface DiscordBot extends Discord.Client {
   commands: Discord.Collection<string, DiscordCommandDocument>
   webhooks: Discord.Collection<string, Discord.WebhookClient>
-  player: Player
+  music: Node
 }
 
 export interface DiscordCommandOptionChoice {

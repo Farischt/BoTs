@@ -1,5 +1,6 @@
 import Discord from "discord.js"
 import { DiscordBot, DiscordCommandOptions } from "."
+import { MAIN_TEXT_CHANNEL_ID } from "../config.json"
 
 export abstract class DiscordCommandDocument {
   private readonly name: string
@@ -54,6 +55,12 @@ export abstract class DiscordCommandDocument {
     return await guild.fetchOwner()
   }
 
+  protected getMainTextChannel(
+    guild: Discord.Guild
+  ): Discord.GuildBasedChannel | undefined {
+    return guild.channels.cache.get(MAIN_TEXT_CHANNEL_ID)
+  }
+
   public abstract run(
     bot: DiscordBot,
     message: Discord.CommandInteraction,
@@ -84,4 +91,11 @@ export abstract class DiscordModerationCommand extends DiscordCommandDocument {
   }
 }
 
-export abstract class DiscordMusicCommand extends DiscordCommandDocument {}
+export abstract class DiscordMusicCommand extends DiscordCommandDocument {
+  protected getAuthorVoiceState(
+    guild: Discord.Guild,
+    author: Discord.GuildMember
+  ): Discord.VoiceState | undefined {
+    return guild.voiceStates.cache.get(author.id)
+  }
+}

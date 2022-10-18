@@ -9,5 +9,6 @@ export default async function ready(
 ): Promise<void> {
   if (!bot.user) return
   await slashCommandsLoader(bot)
+  bot.music.connect(bot.user.id)
   Logger.log(`${bot.user.tag} is ready !`)
 }

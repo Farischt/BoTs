@@ -1,11 +1,19 @@
 import Discord from "discord.js"
+import { Addable } from "@lavaclient/queue"
 import {
   DiscordBot,
   DiscordMusicCommand,
   DiscordCommandOptions,
   DiscordCommandData,
   DiscordCommandOptionType,
+  DiscordCommandInteractionResponse,
 } from "../../types"
+
+interface GetMusicResponse {
+  tracks: Addable[]
+  success: string
+  error: string
+}
 
 class PlayCommand extends DiscordMusicCommand {
   public constructor(
@@ -18,84 +26,93 @@ class PlayCommand extends DiscordMusicCommand {
     super(name, description, dmPermission, defaultMemberPermission, options)
   }
 
+  private async getMusic(
+    bot: DiscordBot,
+    query: string
+  ): Promise<GetMusicResponse> {
+    const results = await bot.music.rest.loadTracks(`ytsearch:${query}`)
+
+    let tracks: Addable[] = []
+    let success: string = ""
+    let error: string = ""
+
+    switch (results.loadType) {
+      case "LOAD_FAILED":
+        error = "Failed to load track"
+        break
+      case "NO_MATCHES":
+        error = "No matches"
+        break
+      case "PLAYLIST_LOADED":
+        tracks = results.tracks
+        success = `Queued playlist [**${results.playlistInfo.name}**](${query}), it has a total of **${tracks.length}** tracks.`
+        break
+      case "TRACK_LOADED":
+        tracks = [results.tracks[0]]
+        success = `Queued track [**${results.tracks[0].info.title}**](${results.tracks[0].info.uri})`
+        break
+      case "SEARCH_RESULT":
+        tracks = results.tracks
+        success = `Queued [**${results.tracks[0].info.title}**](${results.tracks[0].info.uri})`
+        break
+    }
+
+    return { tracks, success, error }
+  }
+
   public async run(
     bot: DiscordBot,
     message: Discord.ChatInputCommandInteraction
   ): Promise<any> {
-    const { guild, member } = message
-
-    if (!bot.user) {
-      return await message.reply("No bot !")
-    }
-
+    const guild = message.guild
     if (!guild)
-      return await message.reply("This command can only be used in a guild.")
-    if (!member)
-      return await message.reply("This command can only be used by a member.")
+      return await message.reply(DiscordCommandInteractionResponse.NoGuild)
 
-    const author = this.getGuildMember(guild, member.user.id)
-    if (!author) return await message.reply("Member not found.")
+    const query = message.options.getString("song")
+    if (!query) return await message.reply("No query provided")
 
-    const me = this.getGuildMember(guild, bot.user.id)
+    const author = this.getGuildMember(guild, message.user.id)
+    if (!author)
+      return await message.reply(DiscordCommandInteractionResponse.NoAuthor)
 
     if (!author.voice.channelId)
-      return await message.reply({
-        content: "You are not in a voice channel!",
-        ephemeral: true,
-      })
-    if (me?.voice.channelId && author.voice.channelId !== me.voice.channelId)
-      return await message.reply({
-        content: "You are not in my voice channel!",
-        ephemeral: true,
-      })
-    const query = message.options.getString("song")
-    if (!query) return await message.reply("No query provided.")
+      return await message.reply("You are not in a voice channel")
 
-    const voiceChannel = author.voice.channel
-    if (!voiceChannel) {
-      return await message.reply("Voice channel not found !")
+    const vc = this.getAuthorVoiceState(guild, author)?.channel
+    if (!vc)
+      return await message.reply(
+        DiscordCommandInteractionResponse.NoVoiceChannel
+      )
+
+    const mainChannel = this.getMainTextChannel(guild)
+    if (!mainChannel)
+      return await message.reply(
+        DiscordCommandInteractionResponse.NoMainChannel
+      )
+
+    const player =
+      bot.music.players.get(guild.id) ?? bot.music.createPlayer(guild.id)
+    if (player && player.channelId !== vc.id)
+      return await message.reply("You are not in the same voice channel as me")
+
+    const { tracks, success, error } = await this.getMusic(bot, query)
+
+    if (success) {
+      await message.reply(success)
+    } else if (error) {
+      return await message.reply(error)
     }
 
-    const queue = await bot.player.createQueue(guild, {
-      metadata: {
-        channel: voiceChannel,
-      },
-      initialVolume: 100,
-      autoSelfDeaf: false,
-    })
-
-    // verify vc connection
-    try {
-      if (!queue.connection) await queue.connect(voiceChannel)
-    } catch {
-      queue.destroy()
-      return await message.reply({
-        content: "Could not join your voice channel!",
-        ephemeral: true,
-      })
+    if (!player.connected) {
+      player.queue.channel = mainChannel as Discord.TextBasedChannel
+      player.connect(vc.id, { deafened: true })
     }
 
-    await message.deferReply()
-    const track = await bot.player
-      .search(query, {
-        requestedBy: message.user,
-      })
-      .then((x) => x.tracks[0])
-    if (!track)
-      return await message.followUp({
-        content: `❌ | Track **${query}** not found!`,
-      })
-
-    queue.addTrack(track)
-
-    if (!queue.playing) await queue.play()
-
-    console.log(queue.playing)
-    console.log(queue.current)
-
-    return await message.followUp({
-      content: `⏱️ | Loading track **${track.title}**!`,
-    })
+    const started = player.playing || player.paused
+    player.queue.add(tracks, { requester: author.id, next: true })
+    if (!started) {
+      await player.queue.start()
+    }
   }
 }
 

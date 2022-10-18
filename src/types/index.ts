@@ -1,3 +1,6 @@
+import Discord from "discord.js"
+import "@lavaclient/queue"
+
 export {
   DiscordCommandDocument,
   DiscordModerationCommand,
@@ -17,3 +20,9 @@ export {
   DiscordWebHookName,
   DiscordCommandOptionType,
 } from "./enum"
+
+declare module "@lavaclient/queue" {
+  interface Queue {
+    channel: Discord.TextBasedChannel
+  }
+}

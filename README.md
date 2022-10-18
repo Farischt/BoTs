@@ -24,13 +24,19 @@ If you find any error in my code, please feel free to reach me here : faris.mana
 
 In the root directory create a `config.json` file and follow the instructions given in `config.example.json` [here](config.example.json).
 
-In your terminal, run the following command :
+In your terminal, run the following command:
 
 ```bash
 yarn install
 ```
 
-You can now start the development server :
+You can now start the lavalink server:
+
+```bash
+yarn lavalink
+```
+
+You can now start the development server:
 
 ```bash
 yarn dev
@@ -57,6 +63,10 @@ That's it ! You should see your bot logged in into your discord server. You can 
   - permission: admin.
   - options:
     - event: `string`, the name of the discord event.
+- `/play`: `plays the provided song the voice channel`
+  - permission: none.
+  - options:
+    - song: `string`, the name of the song to play.
 
 ## Events
 
