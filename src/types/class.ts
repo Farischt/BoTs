@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 import { DiscordBot, DiscordCommandOptions } from "."
-import { MAIN_TEXT_CHANNEL_ID } from "../config.json"
+import { TEXT_CHANNELS, VOICE_CHANNELS } from "../config.json"
 
 export abstract class DiscordCommandDocument {
   private readonly name: string
@@ -58,7 +58,13 @@ export abstract class DiscordCommandDocument {
   protected getMainTextChannel(
     guild: Discord.Guild
   ): Discord.GuildBasedChannel | undefined {
-    return guild.channels.cache.get(MAIN_TEXT_CHANNEL_ID)
+    return guild.channels.cache.get(TEXT_CHANNELS.GENERAL_ID)
+  }
+
+  protected getMusicTextChannel(guild: Discord.Guild): Discord.TextChannel {
+    return guild.channels.cache.get(
+      TEXT_CHANNELS.MUSIC_ID
+    ) as Discord.TextChannel
   }
 
   public abstract run(
@@ -97,5 +103,11 @@ export abstract class DiscordMusicCommand extends DiscordCommandDocument {
     author: Discord.GuildMember
   ): Discord.VoiceState | undefined {
     return guild.voiceStates.cache.get(author.id)
+  }
+
+  protected getMusicVoiceChannel(
+    guild: Discord.Guild
+  ): Discord.GuildBasedChannel | undefined {
+    return guild.channels.cache.get(VOICE_CHANNELS.MUSIC_ID)
   }
 }
