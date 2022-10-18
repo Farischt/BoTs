@@ -23,6 +23,7 @@
     "lavaclient": "^4.1.1"
   },
   "devDependencies": {
+    "@lavaclient/types": "^2.1.1",
     "@types/jest": "^29.1.2",
     "@types/node": "^18.7.23",
     "@typescript-eslint/eslint-plugin": "^5.0.0",

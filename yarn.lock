@@ -636,7 +636,7 @@
   dependencies:
     tslib "^2.4.0"
 
-"@lavaclient/types@^2.1.0":
+"@lavaclient/types@^2.1.0", "@lavaclient/types@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@lavaclient/types/-/types-2.1.1.tgz#2c15b029f6335701770bce624aaac74b2e7cb7f5"
   integrity sha512-r69sXGyUQgqsNiDHYRm2uWuDumRydylIB0k51lKkVzFinI+DcBq2hKW3KJkImT4+YY5boQ6K7HPAO9RvhJkQDg==
