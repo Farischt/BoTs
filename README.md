@@ -22,7 +22,11 @@ If you find any error in my code, please feel free to reach me here : faris.mana
 
 ## Installation
 
+First install [Lavalink.jar](https://github.com/freyacodes/Lavalink/releases) and copy the file inside this [folder](./lavalink/).
+
 In the root directory create a `config.json` file and follow the instructions given in `config.example.json` [here](config.example.json).
+
+The lavalink server host, port and password, are the ones provided in [application.yml](./lavalink/application.yml).
 
 In your terminal, run the following command:
 
