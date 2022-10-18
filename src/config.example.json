@@ -1,13 +1,24 @@
 {
-  "INSTRUCTIONS": "Create a config.json file in this directory. Copy the contents of this file into the config.json file and replace the values with your own.",
-  "DISCORD_TOKEN": "Your discord token",
-  "MAIN_TEXT_CHANNEL_ID": "Your text channel ID",
+  "DISCORD_TOKEN": "Your discord bot token",
+  "TEXT_CHANNELS": {
+    "GENERAL_ID": "General text channel id",
+    "MUSIC_ID": "Music text channel id"
+  },
+  "VOICE_CHANNELS": {
+    "MUSIC_ID": "Music voice channel id"
+  },
   "COMMAND_PREFIX": "!",
-  "BOT_USER_ID": "Your bot user ID",
+  "BOT_USER_ID": "bot user id",
   "WEBHOOKS": {
     "WELCOMER": {
       "ID": "Your webhook id",
       "TOKEN": "Your webhook token"
     }
+  },
+  "LAVALINK_CONNECTION": {
+    "host": "lavalink host",
+    "port": 2333,
+    "password": "lavalink server password",
+    "secure": false
   }
 }

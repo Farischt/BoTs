@@ -1,13 +1,15 @@
 import Discord from "discord.js"
 import { DiscordBot, DiscordMemberRole, DiscordWebHookName } from "../types"
-import { MAIN_TEXT_CHANNEL_ID } from "../config.json"
+import { TEXT_CHANNELS } from "../config.json"
 import { Logger } from "../utils"
 
 export default async function guildMemberAdd(
   bot: DiscordBot,
   newMember: Discord.GuildMember
 ): Promise<void> {
-  const textChannel = newMember.guild.channels.cache.get(MAIN_TEXT_CHANNEL_ID)
+  const textChannel = newMember.guild.channels.cache.get(
+    TEXT_CHANNELS.GENERAL_ID
+  )
   if (!textChannel) return
 
   const defaultRole = newMember.guild.roles.cache.find(
