@@ -1,6 +1,6 @@
 import Discord from "discord.js"
 import { DiscordBot, DiscordMemberRole, DiscordWebHookName } from "../types"
-import { TEXT_CHANNELS } from "../config.json"
+import { CHANNELS } from "../config.json"
 import { Logger } from "../utils"
 
 export default async function guildMemberAdd(
@@ -8,7 +8,7 @@ export default async function guildMemberAdd(
   newMember: Discord.GuildMember
 ): Promise<void> {
   const textChannel = newMember.guild.channels.cache.get(
-    TEXT_CHANNELS.GENERAL_ID
+    CHANNELS.GENERAL.TEXT_ID
   )
   if (!textChannel) return
 

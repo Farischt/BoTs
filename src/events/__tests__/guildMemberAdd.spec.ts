@@ -1,7 +1,7 @@
 import Discord from "discord.js"
 import { DiscordBot, DiscordMemberRole, DiscordWebHookName } from "../../types"
 import { guildMemberAdd } from "../index"
-import { TEXT_CHANNELS } from "../../config.json"
+import { CHANNELS } from "../../config.json"
 
 const USER_TAG = "newMember#1234"
 
@@ -28,7 +28,7 @@ describe("guildMemberAdd Handler", () => {
       guild: {
         channels: {
           cache: new Discord.Collection<string, Discord.GuildBasedChannel>([
-            [TEXT_CHANNELS.GENERAL_ID, {} as Discord.GuildBasedChannel],
+            [CHANNELS.GENERAL.TEXT_ID, {} as Discord.GuildBasedChannel],
           ]),
         },
         roles: {
@@ -51,7 +51,7 @@ describe("guildMemberAdd Handler", () => {
       guild: {
         channels: {
           cache: new Discord.Collection<string, Discord.GuildBasedChannel>([
-            [TEXT_CHANNELS.GENERAL_ID, {} as Discord.GuildBasedChannel],
+            [CHANNELS.GENERAL.TEXT_ID, {} as Discord.GuildBasedChannel],
           ]),
         },
         roles: {
@@ -105,7 +105,7 @@ describe("guildMemberAdd Handler", () => {
       guild: {
         channels: {
           cache: new Discord.Collection<string, Discord.GuildBasedChannel>([
-            [TEXT_CHANNELS.GENERAL_ID, {} as Discord.GuildBasedChannel],
+            [CHANNELS.GENERAL.TEXT_ID, {} as Discord.GuildBasedChannel],
           ]),
         },
         roles: {

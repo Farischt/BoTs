@@ -1,11 +1,11 @@
 {
   "DISCORD_TOKEN": "Your discord bot token",
-  "TEXT_CHANNELS": {
-    "GENERAL_ID": "General text channel id",
-    "MUSIC_ID": "Music text channel id"
-  },
-  "VOICE_CHANNELS": {
-    "MUSIC_ID": "Music voice channel id"
+  "CHANNELS": {
+    "GENERAL": { "TEXT_ID": "id" },
+    "MUSIC": {
+      "TEXT_ID": "id",
+      "VOICE_ID": "id"
+    }
   },
   "COMMAND_PREFIX": "!",
   "BOT_USER_ID": "bot user id",
@@ -13,6 +13,10 @@
     "WELCOMER": {
       "ID": "Your webhook id",
       "TOKEN": "Your webhook token"
+    },
+    "DJ": {
+      "ID": "id",
+      "TOKEN": "token"
     }
   },
   "LAVALINK_CONNECTION": {
