@@ -14,6 +14,17 @@ export class Logger {
     console.log(chalk.bold.blue(message))
   }
 
+  public table(
+    data: any[],
+    columns: string[],
+    spacingTop?: boolean,
+    spacingBottom?: boolean
+  ): void {
+    spacingTop && console.log("\n")
+    console.table(data, columns)
+    spacingBottom && console.log("\n")
+  }
+
   public info(message: string): void {
     console.info(chalk.bold.green(message))
   }

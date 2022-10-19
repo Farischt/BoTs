@@ -78,6 +78,16 @@ export default async function loader(bot: DiscordBot): Promise<void> {
       body: commands,
     })
     Logger.log("Successfully registered application commands.")
+    Logger.table(
+      Array.from(bot.commands.values()).map((slashCmd) => {
+        return {
+          command: slashCmd.getName(),
+          description: slashCmd.getDescription(),
+          loaded: true,
+        }
+      }),
+      ["command", "description", "loaded"]
+    )
   } catch (error) {
     Logger.error("Slash commands failed to load\n")
   }
