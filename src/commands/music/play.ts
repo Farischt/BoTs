@@ -8,6 +8,7 @@ import {
   DiscordCommandData,
   DiscordCommandOptionType,
   DiscordCommandInteractionResponse,
+  DiscordMusicCommandInteractionResponse,
 } from "../../types"
 
 interface GetMusicResponse {
@@ -21,10 +22,9 @@ enum PlayInteractionResponse {
   LoadFailed = "Failed to load your track !",
   NoMatch = "No result matches your query !",
   NoVoiceMusicChannel = "No voice channel found !",
-  NotInVoiceChannel = "You must be in a voice channel to play music !",
   NotSameChannel = "You must be in the same voice channel as me to play music !",
-  NotMusicChannel = "You must be in the `Music` voice channel to play music !",
   Success = "Successfully played your music !",
+  Busy = "The music player is already in use ! Prefere using `/add` command",
 }
 
 export class PlayCommand extends DiscordMusicCommand {
@@ -82,7 +82,9 @@ export class PlayCommand extends DiscordMusicCommand {
   public async run(
     bot: DiscordBot,
     message: Discord.ChatInputCommandInteraction
-  ): Promise<Discord.InteractionResponse<boolean> | undefined | any> {
+  ): Promise<
+    Discord.InteractionResponse<boolean> | undefined | Discord.Message<boolean>
+  > {
     const guild = message.guild
     if (!guild)
       return await message.reply({
@@ -106,10 +108,11 @@ export class PlayCommand extends DiscordMusicCommand {
 
     if (!author.voice.channelId)
       return await message.reply({
-        content: PlayInteractionResponse.NotInVoiceChannel,
+        content: DiscordMusicCommandInteractionResponse.NotInVoiceChannel,
         ephemeral: true,
       })
 
+    // TODO : Reusable code for all music commands
     const authorVoiceChannel = this.getAuthorVoiceState(guild, author)?.channel
     if (!authorVoiceChannel) {
       return await message.reply({
@@ -123,10 +126,11 @@ export class PlayCommand extends DiscordMusicCommand {
       return await message.reply(PlayInteractionResponse.NoVoiceMusicChannel)
     } else if (authorVoiceChannel.id !== musicVoiceChannel.id) {
       return await message.reply({
-        content: PlayInteractionResponse.NotMusicChannel,
+        content: DiscordMusicCommandInteractionResponse.NotInMusicChannel,
         ephemeral: true,
       })
     }
+    // TODO : End of reusable code for all music commands
 
     const musicTextChannel = this.getMusicTextChannel(guild)
     if (!musicTextChannel)
@@ -147,8 +151,7 @@ export class PlayCommand extends DiscordMusicCommand {
     const started = player.playing || player.paused
     if (started) {
       return await message.reply({
-        content:
-          "The music player is already in use ! Prefere using `/add` command",
+        content: PlayInteractionResponse.Busy,
         ephemeral: true,
       })
     }
