@@ -1,11 +1,10 @@
-import { DiscordBot } from "../../types"
+import { DiscordBot, DiscordWebHookName } from "../../types"
+import { CHANNELS } from "../../config.json"
 
 export default async function queueFinish(bot: DiscordBot): Promise<void> {
   bot.music.on("queueFinish", async (queue) => {
-    await queue.channel.send(
-      "`Music player stopped`, queue is empty! Run `play` command to start playing music again."
-    )
-    queue.player.disconnect()
-    queue.player.node.destroyPlayer(queue.player.guildId)
+    const Dj = bot.webhooks.get(DiscordWebHookName.Dj)
+    const message = `Music player \`stopped\` because it is empty on channel <#${CHANNELS.MUSIC.VOICE_ID}> ! Use \`/play\` to play a music.`
+    Dj ? await Dj.send(message) : await queue.channel.send(message)
   })
 }
