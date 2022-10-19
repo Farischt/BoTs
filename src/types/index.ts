@@ -19,6 +19,7 @@ export {
   DiscordMemberRole,
   DiscordWebHookName,
   DiscordCommandOptionType,
+  DiscordMusicCommandInteractionResponse,
 } from "./enum"
 
 declare module "@lavaclient/queue" {
