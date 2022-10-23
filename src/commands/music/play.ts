@@ -23,8 +23,8 @@ enum PlayInteractionResponse {
   NoMatch = "No result matches your query !",
   NoVoiceMusicChannel = "No voice channel found !",
   NotSameChannel = "You must be in the same voice channel as me to play music !",
-  Success = "Successfully played your music !",
-  Busy = "The music player is already in use ! Prefere using `/add` command",
+  Success = "Successfully added your music !",
+  Busy = "Music added to the queue ! The bot is already playing music !",
 }
 
 export class PlayCommand extends DiscordMusicCommand {
@@ -148,14 +148,6 @@ export class PlayCommand extends DiscordMusicCommand {
         ephemeral: true,
       })
 
-    const started = player.playing || player.paused
-    if (started) {
-      return await message.reply({
-        content: PlayInteractionResponse.Busy,
-        ephemeral: true,
-      })
-    }
-
     const { tracks, error, success } = await this.getMusic(bot, query)
     if (success) {
       await message.reply({
@@ -166,12 +158,21 @@ export class PlayCommand extends DiscordMusicCommand {
       return await message.reply({ content: error, ephemeral: true })
     }
 
+    // At this point, a message has been sent to the user, we need to use followUp method to send a new message
+
     if (!player.connected) {
       player.queue.channel = musicTextChannel
       player.connect(musicVoiceChannel.id, { deafened: true })
     }
 
-    player.queue.add(tracks, { requester: author.id, next: true })
+    player.queue.add(tracks, { requester: author.id })
+    const started = player.playing || player.paused
+    if (started) {
+      return await message.followUp({
+        content: PlayInteractionResponse.Busy,
+        ephemeral: true,
+      })
+    }
     await player.queue.start()
     return await message.followUp({
       content: PlayInteractionResponse.Success,
@@ -182,7 +183,7 @@ export class PlayCommand extends DiscordMusicCommand {
 
 export const playCommandData: DiscordCommandData = {
   name: "play",
-  description: "Play the specified song",
+  description: "Play or add the specified song to the music player",
   dmPermission: true,
   defaultMemberPermission: null,
   options: [
