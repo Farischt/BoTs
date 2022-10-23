@@ -79,13 +79,15 @@ export default async function loader(bot: DiscordBot): Promise<void> {
     })
     Logger.log("Successfully registered application commands.")
     Logger.table(
-      Array.from(bot.commands.values()).map((slashCmd) => {
-        return {
-          command: slashCmd.getName(),
-          description: slashCmd.getDescription(),
-          loaded: true,
-        }
-      }),
+      Array.from(bot.commands.values())
+        .map((slashCmd) => {
+          return {
+            command: slashCmd.getName(),
+            description: slashCmd.getDescription(),
+            loaded: true,
+          }
+        })
+        .sort((a, b) => a.command.localeCompare(b.command)),
       ["command", "description", "loaded"]
     )
   } catch (error) {
