@@ -9,7 +9,7 @@ import {
   DiscordWebHookName,
 } from "../../types"
 
-enum PauseInteractionResponse {
+export enum PauseInteractionResponse {
   AlreadyPaused = "Player is already paused !",
   Success = "Successfully paused the music !",
 }

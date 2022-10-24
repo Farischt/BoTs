@@ -10,7 +10,7 @@ import {
 } from "../../types"
 import { CHANNELS } from "../../config.json"
 
-enum ResumeInteractionResponse {
+export enum ResumeInteractionResponse {
   AlreadyPlaying = "Player is already playing !",
   Success = "Successfully resumed the music !",
 }

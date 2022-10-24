@@ -11,13 +11,13 @@ import {
   DiscordMusicCommandInteractionResponse,
 } from "../../types"
 
-interface GetMusicResponse {
+export interface GetMusicResponse {
   tracks: Addable[]
   success: string
   error: string
 }
 
-enum PlayInteractionResponse {
+export enum PlayInteractionResponse {
   NoQuery = "No query provided !",
   LoadFailed = "Failed to load your track !",
   NoMatch = "No result matches your query !",
