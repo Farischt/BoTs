@@ -2,7 +2,7 @@ import fs from "fs/promises"
 import path from "path"
 
 import { DiscordBot, DiscordCommandDocument } from "../types"
-import { Logger } from "../utils"
+import { Logger, fileExtension } from "../utils"
 
 const commandsDir = path.join(__dirname, "../commands")
 
@@ -11,12 +11,15 @@ export default async function loader(
   dir = commandsDir
 ): Promise<void> {
   ;(await fs.readdir(dir, { withFileTypes: true }))
-    .filter((file) => file.name !== "__tests__" && file.name !== "index.ts")
+    .filter(
+      (file) =>
+        file.name !== "__tests__" && file.name !== `index${fileExtension}`
+    )
     .forEach(async (file) => {
       if (file.isDirectory()) {
         await loader(bot, path.join(dir, file.name))
       } else {
-        if (!file.name.endsWith(".ts")) return
+        if (!file.name.endsWith(fileExtension)) return
         const command: DiscordCommandDocument = (
           await import(`${dir}/${file.name}`)
         ).default

@@ -3,15 +3,15 @@ import path from "path"
 import Discord from "discord.js"
 
 import { DiscordBot } from "../types"
-import { Logger } from "../utils"
+import { Logger, fileExtension } from "../utils"
 
 const webHookDir = path.join(__dirname, "../hooks")
 
 export default async function loader(bot: DiscordBot): Promise<void> {
   ;(await fs.readdir(webHookDir))
-    .filter((file) => file.endsWith(".ts"))
+    .filter((file) => file.endsWith(fileExtension))
     .forEach(async (fileName) => {
-      if (fileName === "index.ts") return
+      if (fileName === `index${fileExtension}`) return
       const webHook: Discord.WebhookClient = (
         await import(`${webHookDir}/${fileName}`)
       ).default
